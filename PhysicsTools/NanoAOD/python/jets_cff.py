@@ -206,7 +206,7 @@ for modifier in run2_miniAOD_80XLegacy, run2_nanoAOD_94X2016:
 
 finalJets = cms.EDFilter("PATJetRefSelector",
     src = cms.InputTag("updatedJetsWithUserData"),
-    cut = cms.string("pt > 15")
+    cut = cms.string("pt >= 0")
 )
 
 finalJetsAK8 = cms.EDFilter("PATJetRefSelector",
