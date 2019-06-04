@@ -25,7 +25,7 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
 
  public: // interface
 
-  enum Version_t { FIRSTDATA, RUNIISTARTUP, WINTER16, WINTER17, WINTER17PUPPI, N_VERSIONS };
+  enum Version_t { FIRSTDATA, RUNIISTARTUP, WINTER16, WINTER17, WINTER17PUPPI, N_VERSIONS , WINTER18};
   enum Quality_t { LOOSE, TIGHT, TIGHTLEPVETO, N_QUALITY};
 
   PFJetIDSelectionFunctor() {}
@@ -53,6 +53,8 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
      version_ = WINTER17;   
    else if( versionStr == "WINTER17PUPPI")
      version_ = WINTER17PUPPI;
+   else if( versionStr == "WINTER18") 
+     version_ = WINTER18;   
    else version_ = WINTER17;//set WINTER17 as default
    
 
@@ -99,7 +101,23 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
       if ( params.exists("nNeutrals_FW_U") ) set("nNeutrals_FW_U", params.getParameter<int> ("nNeutrals_FW_U") );
       if ( quality_ == TIGHTLEPVETO ) {if ( params.exists("MUF") ) set("MUF", params.getParameter<double> ("MUF") );}
     }
+    if(version_ == WINTER18){
+      if ( params.exists("NEF_EC_L") ) set("NEF_EC_L", params.getParameter<double> ("NEF_EC_L") );
+      if ( params.exists("NEF_EC_U") ) set("NEF_EC_U", params.getParameter<double> ("NEF_EC_U") );
+      if ( params.exists("nNeutrals_EC") ) set("nNeutrals_EC", params.getParameter<int> ("nNeutrals_EC") );
+      if ( params.exists("NHF_FW") ) set("NHF_FW", params.getParameter<double> ("NHF_FW") );
+      if ( params.exists("NEF_FW") ) set("NEF_FW", params.getParameter<double> ("NEF_FW") );
+      if ( params.exists("nNeutrals_FW") ) set("nNeutrals_FW", params.getParameter<int> ("nNeutrals_FW") );
+      if ( params.exists("NHF_26_27") ) set("NHF_26_27", params.getParameter<double> ("NHF_26_27") );
+      if ( params.exists("NEF_26_27") ) set("NEF_26_27", params.getParameter<double> ("NEF_26_27") );
+      if ( params.exists("NCH_26_27") ) set("NCH_26_27", params.getParameter<int> ("NCH_26_27") );
 
+      if ( quality_ == TIGHTLEPVETO ) {
+          if ( params.exists("MUF") ) set("MUF", params.getParameter<double> ("MUF") );
+          if ( params.exists("MUF_26_27") ) set("MUF_26_27", params.getParameter<double> ("MUF_26_27") );
+          if ( params.exists("CEF_26_27") ) set("CEF_26_27", params.getParameter<double> ("CEF_26_27") );
+      }
+    }
 
     if ( params.exists("cutsToIgnore") )
       setIgnoredCuts( params.getParameter<std::vector<std::string> >("cutsToIgnore") );
@@ -123,7 +141,7 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
   //
   bool operator()( const pat::Jet & jet, pat::strbitset & ret ) override
   {
-    if ( version_ == FIRSTDATA || version_ == RUNIISTARTUP || version_ == WINTER16 || version_ == WINTER17 || version_ == WINTER17PUPPI) {
+    if ( version_ == FIRSTDATA || version_ == RUNIISTARTUP || version_ == WINTER16 || version_ == WINTER17 || version_ == WINTER17PUPPI || version_ == WINTER18) {
       if ( jet.currentJECLevel() == "Uncorrected" || !jet.jecSetsAvailable() )
 	return firstDataCuts( jet, ret, version_);
       else
@@ -141,7 +159,7 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
   //
   bool operator()( const reco::PFJet & jet, pat::strbitset & ret )
   {
-    if ( version_ == FIRSTDATA || version_ == RUNIISTARTUP || version_ == WINTER16 || version_ == WINTER17 || version_ == WINTER17PUPPI  ){ return firstDataCuts( jet, ret, version_);
+    if ( version_ == FIRSTDATA || version_ == RUNIISTARTUP || version_ == WINTER16 || version_ == WINTER17 || version_ == WINTER17PUPPI || version_ == WINTER18 ){ return firstDataCuts( jet, ret, version_);
     }
     else {
       return false;
@@ -292,10 +310,14 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
 
 
    // Cuts for |eta| < 2.4 for FIRSTDATA, RUNIISTARTUP, WINTER16 and WINTER17
-    if((version_ != WINTER17 && version_ != WINTER17PUPPI) ||  quality_ != TIGHT ) {if ( ignoreCut(indexCEF_)           || ( cef < cut(indexCEF_, double()) || std::abs(jet.eta()) > 2.4 ) ) passCut( ret, indexCEF_);}
+    if(version_ != WINTER18 && ((version_ != WINTER17 && version_ != WINTER17PUPPI) ||  quality_ != TIGHT) ) {
+        if ( ignoreCut(indexCEF_)           || ( cef < cut(indexCEF_, double()) || std::abs(jet.eta()) > 2.4 ) ) passCut( ret, indexCEF_);
+    }
 
-    if ( ignoreCut(indexCHF_)           || ( chf > cut(indexCHF_, double()) || std::abs(jet.eta()) > 2.4 ) ) passCut( ret, indexCHF_);
-    if ( ignoreCut(indexNCH_)           || ( nch > cut(indexNCH_, int())    || std::abs(jet.eta()) > 2.4 ) ) passCut( ret, indexNCH_);
+    if(version_ != WINTER18) {
+        if ( ignoreCut(indexCHF_)           || ( chf > cut(indexCHF_, double()) || std::abs(jet.eta()) > 2.4 ) ) passCut( ret, indexCHF_);
+        if ( ignoreCut(indexNCH_)           || ( nch > cut(indexNCH_, int())    || std::abs(jet.eta()) > 2.4 ) ) passCut( ret, indexNCH_);
+    }
 
     if(version_ == FIRSTDATA){// Cuts for all eta for FIRSTDATA
       if ( ignoreCut(indexNConstituents_) || ( nconstituents > cut(indexNConstituents_, int()) ) ) passCut( ret, indexNConstituents_);
@@ -363,7 +385,37 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
       if ( ignoreCut(indexNNeutrals_FW_U_) || ( nneutrals < cut(indexNNeutrals_FW_U_, int())    || std::abs(jet.eta()) <= 3.0 ) ) passCut( ret, indexNNeutrals_FW_U_);
 
     }
+    else if(version_ == WINTER18){
+      // Cuts for |eta| <= 2.6 for WINTER18 scenario
+      if ( ignoreCut(indexNConstituents_) || ( nconstituents > cut(indexNConstituents_, int()) || std::abs(jet.eta()) > 2.6 ) ) passCut( ret, indexNConstituents_);
+      if ( ignoreCut(indexNEF_)           || ( nef < cut(indexNEF_, double())  || std::abs(jet.eta()) > 2.6 ) ) passCut( ret, indexNEF_);
+      if ( ignoreCut(indexNHF_)           || ( nhf < cut(indexNHF_, double())  || std::abs(jet.eta()) > 2.6 ) ) passCut( ret, indexNHF_);
+      if ( ignoreCut(indexCHF_)           || ( chf > cut(indexCHF_, double()) || std::abs(jet.eta()) > 2.6 ) ) passCut( ret, indexCHF_);
+      if ( ignoreCut(indexNCH_)           || ( nch > cut(indexNCH_, int())    || std::abs(jet.eta()) > 2.6 ) ) passCut( ret, indexNCH_);
+      if ( quality_ == TIGHTLEPVETO ) {
+          if ( ignoreCut(indexMUF_)           || ( muf < cut(indexMUF_, double()) || std::abs(jet.eta()) > 2.6 ) ) passCut( ret, indexMUF_);
+          if ( ignoreCut(indexCEF_)           || ( cef < cut(indexCEF_, double()) || std::abs(jet.eta()) > 2.6 ) ) passCut( ret, indexCEF_);
+      }
+      //Cuts for 2.6 < |eta| <= 2.7 for WINTER18 scenario
+      if ( ignoreCut(indexNEF_26_27_)        || ( nef < cut(indexNEF_26_27_, double())  || std::abs(jet.eta()) <= 2.6 || std::abs(jet.eta()) > 2.7)  ) passCut( ret, indexNEF_26_27_);
+      if ( ignoreCut(indexNHF_26_27_)        || ( nhf < cut(indexNHF_26_27_, double())  || std::abs(jet.eta()) <= 2.6 || std::abs(jet.eta()) > 2.7)  ) passCut( ret, indexNHF_26_27_);
+      if ( ignoreCut(indexNCH_26_27_)        || ( chf > cut(indexNCH_26_27_, double())  || std::abs(jet.eta()) <= 2.6 || std::abs(jet.eta()) > 2.7)  ) passCut( ret, indexNCH_26_27_);
+      if ( quality_ == TIGHTLEPVETO) {
+          if ( ignoreCut(indexMUF_26_27_)           || ( muf < cut(indexMUF_26_27_, double()) || std::abs(jet.eta()) <= 2.6 || std::abs(jet.eta()) > 2.7) ) passCut( ret, indexMUF_26_27_);
+          if ( ignoreCut(indexCEF_26_27_)           || ( cef < cut(indexCEF_26_27_, double()) || std::abs(jet.eta()) <= 2.6 || std::abs(jet.eta()) > 2.7) ) passCut( ret, indexCEF_26_27_);
+      }
+      // Cuts for 2.7 < |eta| <= 3.0 for WINTER18 scenario
 
+      if ( ignoreCut(indexNEF_EC_L_)        || ( nef > cut(indexNEF_EC_L_, double())  || std::abs(jet.eta()) <= 2.7 || std::abs(jet.eta()) > 3.0)  ) passCut( ret, indexNEF_EC_L_);
+      if ( ignoreCut(indexNEF_EC_U_)        || ( nef < cut(indexNEF_EC_U_, double())  || std::abs(jet.eta()) <= 2.7 || std::abs(jet.eta()) > 3.0)  ) passCut( ret, indexNEF_EC_U_);  
+      if ( ignoreCut(indexNNeutrals_EC_)  || ( nneutrals > cut(indexNNeutrals_EC_, int())  || std::abs(jet.eta()) <= 2.7 || std::abs(jet.eta()) > 3.0)  ) passCut( ret, indexNNeutrals_EC_);
+
+      // Cuts for |eta| > 3.0 for WINTER18 scenario
+      if ( ignoreCut(indexNHF_FW_)           || ( nhf > cut(indexNHF_FW_, double()) || std::abs(jet.eta()) <= 3.0 ) ) passCut( ret, indexNHF_FW_);
+      if ( ignoreCut(indexNEF_FW_)           || ( nef < cut(indexNEF_FW_, double()) || std::abs(jet.eta()) <= 3.0 ) ) passCut( ret, indexNEF_FW_);
+      if ( ignoreCut(indexNNeutrals_FW_) || ( nneutrals > cut(indexNNeutrals_FW_, int())    || std::abs(jet.eta()) <= 3.0 ) ) passCut( ret, indexNNeutrals_FW_);
+
+    }
 
     //std::cout << "<PFJetIDSelectionFunctor::firstDataCuts>:" << std::endl;
     //std::cout << " jet: Pt = " << jet.pt() << ", eta = " << jet.eta() << ", phi = " << jet.phi() << std::endl;
@@ -379,7 +431,7 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
   {
     push_back("CHF" );
     push_back("NHF" );
-    if( (version_ != WINTER17 && version_!=WINTER17PUPPI) || quality_ != TIGHT ) push_back("CEF" );
+    if( (version_ != WINTER17 && version_!=WINTER17PUPPI && version_ != WINTER18) || quality_ != TIGHT ) push_back("CEF" );
     push_back("NEF" );
     push_back("NCH" );
     push_back("nConstituents");
@@ -412,9 +464,24 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
       push_back("nNeutrals_FW_U");
       if (quality_ == TIGHTLEPVETO) push_back("MUF");
     }
- 
+    if(version_ == WINTER18 ){
+      push_back("NEF_EC_L");
+      push_back("NEF_EC_U");
+      push_back("nNeutrals_EC");
+      push_back("NEF_FW");
+      push_back("NHF_FW");
+      push_back("nNeutrals_FW");
+      push_back("NHF_26_27");
+      push_back("NEF_26_27");
+      push_back("NCH_26_27");
+      if (quality_ == TIGHTLEPVETO){
+          push_back("MUF_26_27");
+          push_back("CEF_26_27");
+          push_back("MUF");
+      }
+    }
 
-    if( (version_ == WINTER17 || version_ == WINTER17PUPPI) && quality_ == LOOSE ){
+    if( (version_ == WINTER17 || version_ == WINTER17PUPPI || version_ == WINTER18) && quality_ == LOOSE ){
       edm::LogWarning("BadJetIDVersion") << "Winter17 JetID version does not support the LOOSE operating point -- defaulting to TIGHT";
       quality_ = TIGHT;
       }
@@ -443,7 +510,7 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
     } else if ( quality_ == TIGHT ) {
       set("CHF", 0.0);
       set("NHF", 0.9);
-      if(version_ != WINTER17 && version_ != WINTER17PUPPI ) set("CEF", 0.99);
+      if(version_ != WINTER17 && version_ != WINTER17PUPPI && version_ != WINTER18) set("CEF", 0.99);
       set("NEF", 0.9);
       set("NCH", 0);
       set("nConstituents", 1);
@@ -473,8 +540,19 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
 	set("nNeutrals_FW_L",2);
 	set("nNeutrals_FW_U",15);
       }
-
-    }else if ( quality_ == TIGHTLEPVETO ) {
+      else if(version_ == WINTER18){
+	set("NEF_EC_L",0.02);
+	set("NEF_EC_U",0.99);
+	set("nNeutrals_EC",2);
+	set("NHF_FW",0.2);
+	set("NEF_FW",0.90);
+	set("nNeutrals_FW",10);
+        set("NHF_26_27", 0.9);
+        set("NEF_26_27", 0.99);
+        set("NCH_26_27", 0.0);
+      }
+    }
+    else if ( quality_ == TIGHTLEPVETO ) {
       set("CHF", 0.0);
       set("NHF", 0.9);
       set("NEF", 0.9);
@@ -499,6 +577,21 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
 	set("nNeutrals_FW_U",15);
 	set("MUF", 0.8);
       }
+      if(version_ == WINTER18){
+	set("CEF", 0.8);
+	set("NEF_EC_L",0.02);
+	set("NEF_EC_U",0.99);
+	set("nNeutrals_EC",2);
+	set("NHF_FW",0.02);
+	set("NEF_FW",0.90);
+	set("nNeutrals_FW",10);
+	set("MUF", 0.8);
+        set("NHF_26_27", 0.9);
+        set("NEF_26_27", 0.99);
+        set("NCH_26_27", 0.0);
+        set("MUF_26_27", 0.8);
+        set("CEF_26_27", 0.8);
+      }
       else if(version_ == WINTER16){
 	set("CEF", 0.9);
 	set("NEF_EC",0.01);
@@ -517,7 +610,7 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
     indexNConstituents_ = index_type (&bits_, "nConstituents");
     indexNEF_ = index_type (&bits_, "NEF");
     indexNHF_ = index_type (&bits_, "NHF");
-    if((version_ != WINTER17 && version_ != WINTER17PUPPI) || quality_ != TIGHT ) indexCEF_ = index_type (&bits_, "CEF");
+    if((version_ != WINTER17 && version_ != WINTER17PUPPI && version_ != WINTER18) || quality_ != TIGHT ) indexCEF_ = index_type (&bits_, "CEF");
 
     indexCHF_ = index_type (&bits_, "CHF");
     indexNCH_ = index_type (&bits_, "NCH");
@@ -550,7 +643,22 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
       indexNNeutrals_FW_U_ = index_type (&bits_, "nNeutrals_FW_U");
       if ( quality_ == TIGHTLEPVETO ) {indexMUF_ = index_type (&bits_, "MUF");}
     }
-
+    if(version_ == WINTER18){
+      indexNEF_EC_L_ = index_type (&bits_, "NEF_EC_L");
+      indexNEF_EC_U_ = index_type (&bits_, "NEF_EC_U");
+      indexNNeutrals_EC_ = index_type (&bits_, "nNeutrals_EC");
+      indexNHF_FW_ = index_type (&bits_, "NHF_FW");
+      indexNEF_FW_ = index_type (&bits_, "NEF_FW");
+      indexNNeutrals_FW_ = index_type (&bits_, "nNeutrals_FW");
+      if ( quality_ == TIGHTLEPVETO ) {indexMUF_ = index_type (&bits_, "MUF");}
+      indexNEF_26_27_ = index_type(&bits_, "NEF_26_27");
+      indexNHF_26_27_ = index_type(&bits_, "NHF_26_27");
+      indexNCH_26_27_ = index_type(&bits_, "NCH_26_27");
+      if(quality_ == TIGHTLEPVETO) {
+          indexMUF_26_27_ = index_type(&bits_, "MUF_26_27");
+          indexCEF_26_27_ = index_type(&bits_, "CEF_26_27");
+      }
+    }
     retInternal_ = getBitTemplate();
   }
 
@@ -577,7 +685,11 @@ class PFJetIDSelectionFunctor : public Selector<pat::Jet>  {
   index_type indexNEF_EC_U_;
   index_type indexNNeutrals_EC_;
 
-
+  index_type indexNEF_26_27_;
+  index_type indexNHF_26_27_;
+  index_type indexNCH_26_27_;
+  index_type indexMUF_26_27_;
+  index_type indexCEF_26_27_;
 };
 
 #endif
