@@ -191,6 +191,7 @@ slimmedElectronsWithUserData = cms.EDProducer("PATElectronUserDataEmbedder",
         cutbasedID_Fall17_V2_medium = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-medium"),
         cutbasedID_Fall17_V2_tight = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-tight"),
         cutbasedID_HEEP = cms.InputTag("egmGsfElectronIDs:heepElectronID-HEEPV70"),
+        passEle32 = cms.InputTag("trigEle32"),
     ),
     userInts = cms.PSet(
         VIDNestedWPBitmap = cms.InputTag("bitmapVIDForEle"),
@@ -361,6 +362,7 @@ electronTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
         lostHits = Var("gsfTrack.hitPattern.numberOfLostHits('MISSING_INNER_HITS')","uint8",doc="number of missing inner hits"),
         isPFcand = Var("pfCandidateRef().isNonnull()",bool,doc="electron is PF candidate"),
         seedGain = Var("userInt('seedGain')","uint8",doc="Gain of the seed crystal"),
+        passesEle32 = Var("userInt('passEle32')", bool, doc="whether the electron passes Ele32"),
     ),
     externalVariables = cms.PSet(
         mvaTTH = ExtVar(cms.InputTag("electronMVATTH"),float, doc="TTH MVA lepton ID score",precision=14),
@@ -445,7 +447,14 @@ electronMCTable = cms.EDProducer("CandMCMatchTableProducer",
     docString = cms.string("MC matching to status==1 electrons or photons"),
 )
 
-electronSequence = cms.Sequence(bitmapVIDForEle + isoForEle + ptRatioRelForEle + seedGainEle + slimmedElectronsWithUserData + finalElectrons)
+trigEle32 = cms.EDProducer("Ele32DoubleL1ToSingleL1",
+                            trigObjs = cms.InputTag("slimmedPatTrigger"),
+                            trigResults = cms.InputTag("TriggerResults","","HLT"),
+                            eles = cms.InputTag("slimmedElectrons")
+                        )
+
+
+electronSequence = cms.Sequence(bitmapVIDForEle + isoForEle + ptRatioRelForEle + seedGainEle + trigEle32 + slimmedElectronsWithUserData + finalElectrons)
 electronTables = cms.Sequence (electronMVATTH + electronTable)
 electronMC = cms.Sequence(electronsMCMatchForTable + electronMCTable)
 
