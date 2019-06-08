@@ -191,7 +191,6 @@ slimmedElectronsWithUserData = cms.EDProducer("PATElectronUserDataEmbedder",
         cutbasedID_Fall17_V2_medium = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-medium"),
         cutbasedID_Fall17_V2_tight = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-tight"),
         cutbasedID_HEEP = cms.InputTag("egmGsfElectronIDs:heepElectronID-HEEPV70"),
-        passEle32DoubleL1ToSingleL1 = cms.InputTag("trigEle32DoubleL1ToSingleL1"),
     ),
     userInts = cms.PSet(
         VIDNestedWPBitmap = cms.InputTag("bitmapVIDForEle"),
@@ -232,6 +231,12 @@ run2_nanoAOD_102Xv1.toModify(slimmedElectronsWithUserData.userFloats,
     ecalTrkEnergyPostCorrNew    = cms.InputTag("calibratedPatElectrons102X","ecalTrkEnergyPostCorr"),
 )
 
+
+
+for modifier in run2_nanoAOD_94XMiniAODv1, run2_nanoAOD_94XMiniAODv2:
+    modifier.toModify(slimmedElectronsWithUserData.userIntFromBools,
+            passEle32DoubleL1ToSingleL1 = cms.InputTag("trigEle32DoubleL1ToSingleL1"),
+            )
 
 run2_miniAOD_80XLegacy.toModify(slimmedElectronsWithUserData.userIntFromBools,
     mvaSpring16GP_WP90 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp90"),
@@ -362,7 +367,6 @@ electronTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
         lostHits = Var("gsfTrack.hitPattern.numberOfLostHits('MISSING_INNER_HITS')","uint8",doc="number of missing inner hits"),
         isPFcand = Var("pfCandidateRef().isNonnull()",bool,doc="electron is PF candidate"),
         seedGain = Var("userInt('seedGain')","uint8",doc="Gain of the seed crystal"),
-        passEle32DoubleL1ToSingleL1 = Var("userInt('passEle32DoubleL1ToSingleL1')", bool, doc="Flag needed to turn HLT_Ele32_WPTight_Gsf_L1DoubleEG into HLT_Ele32_WPTight_Gsf. It is true for objects passing hltEle32L1DoubleEGWPTightGsfTrackIsoFilter which also pass hltEGL1SingleEGOrFilter.")
     ),
     externalVariables = cms.PSet(
         mvaTTH = ExtVar(cms.InputTag("electronMVATTH"),float, doc="TTH MVA lepton ID score",precision=14),
@@ -426,6 +430,12 @@ run2_miniAOD_80XLegacy.toModify(electronTable.variables,
 
 )
 
+#Add flag for 2017 allowing to turn HLT_Ele32_WPTight_Gsf_L1DoubleEG into HLT_Ele32_WPTight_Gsf
+for modifier in run2_nanoAOD_94XMiniAODv1, run2_nanoAOD_94XMiniAODv2:
+    modifier.toModify(electronTable.variables,
+            passEle32DoubleL1ToSingleL1 = Var("userInt('passEle32DoubleL1ToSingleL1')", bool, doc="Flag needed to turn HLT_Ele32_WPTight_Gsf_L1DoubleEG into HLT_Ele32_WPTight_Gsf. It is true for objects passing hltEle32L1DoubleEGWPTightGsfTrackIsoFilter which also pass hltEGL1SingleEGOrFilter."),
+            )
+
 electronsMCMatchForTable = cms.EDProducer("MCMatcher",  # cut on deltaR, deltaPt/Pt; pick best by deltaR
     src         = electronTable.src,                 # final reco collection
     matched     = cms.InputTag("finalGenParticles"), # final mc-truth particle collection
@@ -454,7 +464,7 @@ trigEle32DoubleL1ToSingleL1 = cms.EDProducer("Ele32DoubleL1ToSingleL1",
                         )
 
 
-electronSequence = cms.Sequence(bitmapVIDForEle + isoForEle + ptRatioRelForEle + seedGainEle + trigEle32DoubleL1ToSingleL1 + slimmedElectronsWithUserData + finalElectrons)
+electronSequence = cms.Sequence(bitmapVIDForEle + isoForEle + ptRatioRelForEle + seedGainEle + slimmedElectronsWithUserData + finalElectrons)
 electronTables = cms.Sequence (electronMVATTH + electronTable)
 electronMC = cms.Sequence(electronsMCMatchForTable + electronMCTable)
 
@@ -465,7 +475,7 @@ _withUpdateAnd80XLegacyScale_sequence.replace(slimmedElectronsWithUserData, cali
 run2_miniAOD_80XLegacy.toReplaceWith(electronSequence, _withUpdateAnd80XLegacyScale_sequence)
 
 _with94XScale_sequence = electronSequence.copy()
-_with94XScale_sequence.replace(slimmedElectronsWithUserData, calibratedPatElectrons94X + slimmedElectronsWithUserData)
+_with94XScale_sequence.replace(slimmedElectronsWithUserData, trigEle32DoubleL1ToSingleL1 + calibratedPatElectrons94X + slimmedElectronsWithUserData)
 run2_nanoAOD_94XMiniAODv1.toReplaceWith(electronSequence, _with94XScale_sequence)
 run2_nanoAOD_94XMiniAODv2.toReplaceWith(electronSequence, _with94XScale_sequence)
 
