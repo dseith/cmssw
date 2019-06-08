@@ -103,15 +103,13 @@ void Ele32DoubleL1ToSingleL1::produce(edm::StreamID streamID, edm::Event& iEvent
   auto trigObjsHandle = getHandle(iEvent,trigObjsToken_); 
   auto elesHandle = getHandle(iEvent,elesToken_);
   
-  // unsigned nEle = elesHandle->size();
-  std::vector<bool> pass_ele_32;//(nEle, false);
+  std::vector<bool> pass_ele_32;
   //so the filter names are all packed in miniAOD so we need to create a new collection of them which are unpacked  
   std::vector<pat::TriggerObjectStandAlone> unpackedTrigObjs;
   for(auto& trigObj : *trigObjsHandle){
     unpackedTrigObjs.push_back(trigObj);
     unpackedTrigObjs.back().unpackFilterLabels(iEvent,*trigResultsHandle);
   }
-  std::cout <<"checking eles "<<std::endl;
   for(auto& ele : *elesHandle){
     //the eta/phi of e/gamma trigger objects is the supercluster eta/phi
     const float eta = ele.superCluster()->eta();
