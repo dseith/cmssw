@@ -662,6 +662,9 @@ void TemplatedSecondaryVertexProducer<IPTI,VTX>::produce(edm::Event &event,
 //		      std::cout << "Jet " << iterJets-trackIPTagInfos->begin() << std::endl; 
 
 		const Vertex &pv = *iterJets->primaryVertex();
+//$$
+     float PVtime = pv.t();
+//$$
 
 		std::set<TransientTrack> primaries;
 		if (constraint == CONSTRAINT_PV_PRIMARIES_IN_FIT) {
@@ -719,7 +722,8 @@ void TemplatedSecondaryVertexProducer<IPTI,VTX>::produce(edm::Event &event,
 
 			if (!trackSelector(*reco::btag::toTrack(trackRef), ipData[indices[i]], *jetRef,
 			                   RecoVertex::convertPos(
-			                   		pv.position()))) {
+//$$			                   		pv.position()))) {
+			                   		pv.position()), PVtime)) {
 				trackData.back().second.svStatus =
 					  TemplatedSecondaryVertexTagInfo<IPTI,VTX>::TrackData::trackSelected;
 				continue;

@@ -62,6 +62,11 @@ CombinedSVComputer::threshTrack(const CandIPTagInfo &trackIPTagInfo,
         const std::vector<btag::TrackIPData> &ipData =
                                         trackIPTagInfo.impactParameterData();
         std::vector<std::size_t> indices = trackIPTagInfo.sortedIndexes(sort);
+//$$
+	bool havePv = trackIPTagInfo.primaryVertex().isNonnull();
+        float PVtime = -10.;
+        if (havePv) PVtime = trackIPTagInfo.primaryVertex()->t();
+//$$
 
         IterationRange range = flipIterate(indices.size(), false);
         TrackKinematics kin;
@@ -70,7 +75,8 @@ CombinedSVComputer::threshTrack(const CandIPTagInfo &trackIPTagInfo,
                 const btag::TrackIPData &data = ipData[idx];
                 const CandidatePtr &track = tracks[idx];
 
-                if (!trackNoDeltaRSelector(track, data, jet, pv))
+//$$                if (!trackNoDeltaRSelector(track, data, jet, pv))
+                if (!trackNoDeltaRSelector(track, data, jet, pv, PVtime))
                         continue;
 
                 kin.add(track);
@@ -116,6 +122,11 @@ CombinedSVComputer::threshTrack(const TrackIPTagInfo &trackIPTagInfo,
 	const std::vector<btag::TrackIPData> &ipData =
 					trackIPTagInfo.impactParameterData();
 	std::vector<std::size_t> indices = trackIPTagInfo.sortedIndexes(sort);
+//$$
+	bool havePv = trackIPTagInfo.primaryVertex().isNonnull();
+        float PVtime = -10.;
+        if (havePv) PVtime = trackIPTagInfo.primaryVertex()->t();
+//$$
 
 	IterationRange range = flipIterate(indices.size(), false);
 	TrackKinematics kin;
@@ -124,7 +135,8 @@ CombinedSVComputer::threshTrack(const TrackIPTagInfo &trackIPTagInfo,
 		const btag::TrackIPData &data = ipData[idx];
 		const Track &track = *tracks[idx];
 
-		if (!trackNoDeltaRSelector(track, data, jet, pv))
+//$$		if (!trackNoDeltaRSelector(track, data, jet, pv))
+		if (!trackNoDeltaRSelector(track, data, jet, pv, PVtime))
 			continue;
 
 		kin.add(track);

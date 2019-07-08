@@ -54,7 +54,8 @@ bool
 TrackSelector::operator () (const Track &track,
                             const btag::TrackIPData &ipData,
                             const Jet &jet,
-                            const GlobalPoint &pv) const
+//$$                            const GlobalPoint &pv) const
+                            const GlobalPoint &pv, float PVtime) const
 {
 
  
@@ -70,14 +71,16 @@ TrackSelector::operator () (const Track &track,
     reco::deltaR2(jet.momentum(),
 		       track.momentum()) < maxJetDeltaR*maxJetDeltaR &&
     jtaPassed &&
-    trackSelection(track, ipData, jet, pv);
+//$$    trackSelection(track, ipData, jet, pv);
+    trackSelection(track, ipData, jet, pv, PVtime);
 }
 
 bool
 TrackSelector::operator () (const CandidatePtr &track,
                             const btag::TrackIPData &ipData,
                             const Jet &jet,
-                            const GlobalPoint &pv) const
+//$$                            const GlobalPoint &pv) const
+                            const GlobalPoint &pv, float PVtime) const
 {
 
  
@@ -93,14 +96,16 @@ TrackSelector::operator () (const CandidatePtr &track,
     reco::deltaR2(jet.momentum(),
 		       track->momentum()) < maxJetDeltaR*maxJetDeltaR &&
     jtaPassed &&
-    trackSelection(*reco::btag::toTrack(track), ipData, jet, pv);
+//$$    trackSelection(*reco::btag::toTrack(track), ipData, jet, pv);
+    trackSelection(*reco::btag::toTrack(track), ipData, jet, pv, PVtime);
 }
 
 bool
 TrackSelector::trackSelection(const Track &track,
                               const btag::TrackIPData &ipData,
                               const Jet &jet,
-                              const GlobalPoint &pv) const
+//$$                              const GlobalPoint &pv) const
+                              const GlobalPoint &pv, float PVtime) const
 {
 
   return (!selectQuality || track.quality(quality)) &&
@@ -109,6 +114,9 @@ TrackSelector::trackSelection(const Track &track,
     (minTotalHits <= 0 ||
      track.hitPattern().numberOfValidHits() >= (int)minTotalHits) &&
     track.normalizedChi2() < maxNormChi2 &&
+//$$$$$$
+    (track.covt0t0() <= 0. || abs( track.t0() - PVtime ) < 0.105) && 
+//$$$$$$
     std::abs(ipData.distanceToJetAxis.value()) <= maxDistToAxis &&
     (ipData.closestToJetAxis - pv).mag() <= maxDecayLen &&
     ipData.ip2d.value()        >= sip2dValMin &&

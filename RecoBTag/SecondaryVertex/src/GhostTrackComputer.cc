@@ -60,6 +60,11 @@ GhostTrackComputer::threshTrack(const TrackIPTagInfo &trackIPTagInfo,
 	const std::vector<btag::TrackIPData> &ipData =
 					trackIPTagInfo.impactParameterData();
 	std::vector<std::size_t> indices = trackIPTagInfo.sortedIndexes(sort);
+//$$
+	bool havePv = trackIPTagInfo.primaryVertex().isNonnull();
+        float PVtime = -10.;
+        if (havePv) PVtime = trackIPTagInfo.primaryVertex()->t();
+//$$
 
 	TrackKinematics kin;
 	for(std::vector<std::size_t>::const_iterator iter = indices.begin();
@@ -67,7 +72,8 @@ GhostTrackComputer::threshTrack(const TrackIPTagInfo &trackIPTagInfo,
 		const btag::TrackIPData &data = ipData[*iter];
 		const Track &track = *tracks[*iter];
 
-		if (!trackNoDeltaRSelector(track, data, jet, pv))
+//$$		if (!trackNoDeltaRSelector(track, data, jet, pv))
+		if (!trackNoDeltaRSelector(track, data, jet, pv, PVtime))
 			continue;
 
 		kin.add(track);
@@ -103,8 +109,14 @@ GhostTrackComputer::threshTrack(const CandIPTagInfo &trackIPTagInfo,
         for(std::vector<std::size_t>::const_iterator iter = indices.begin(); iter != indices.end(); ++iter) {
         const btag::TrackIPData &data = ipData[*iter];
         const CandidatePtr &track = tracks[*iter];
+//$$
+	bool havePv = trackIPTagInfo.primaryVertex().isNonnull();
+        float PVtime = -10.;
+        if (havePv) PVtime = trackIPTagInfo.primaryVertex()->t();
+//$$
 
-        if (!trackNoDeltaRSelector(track, data, jet, pv))
+//$$        if (!trackNoDeltaRSelector(track, data, jet, pv))
+        if (!trackNoDeltaRSelector(track, data, jet, pv, PVtime))
                continue;
 
         kin.add(track);
@@ -146,6 +158,10 @@ GhostTrackComputer::operator () (const TrackIPTagInfo &ipInfo,
 		pv = GlobalPoint(ipInfo.primaryVertex()->x(),
 		                 ipInfo.primaryVertex()->y(),
 		                 ipInfo.primaryVertex()->z());
+//$$
+       float PVtime = -10.;
+       if (havePv) PVtime = ipInfo.primaryVertex()->t();
+//$$
 
 	btag::Vertices::VertexType vtxType = btag::Vertices::NoVertex;
 
@@ -265,7 +281,8 @@ GhostTrackComputer::operator () (const TrackIPTagInfo &ipInfo,
 
 		// filter track
 
-		if (!trackSelector(track, data, *jet, pv))
+//$$		if (!trackSelector(track, data, *jet, pv))
+		if (!trackSelector(track, data, *jet, pv, PVtime))
 			continue;
 
 		// add track to kinematics for all tracks in jet
@@ -286,7 +303,8 @@ GhostTrackComputer::operator () (const TrackIPTagInfo &ipInfo,
 			const TrackRef &pairTrackRef = tracks[pairIdx];
 			const Track &pairTrack = *pairTrackRef;
 
-			if (!trackSelector(pairTrack, pairTrackData, *jet, pv))
+//$$			if (!trackSelector(pairTrack, pairTrackData, *jet, pv))
+			if (!trackSelector(pairTrack, pairTrackData, *jet, pv, PVtime))
 				continue;
 
 			trackPairV0Test[1] = pairTrackRef;
@@ -368,6 +386,10 @@ GhostTrackComputer::operator () (const CandIPTagInfo &ipInfo,
 		pv = GlobalPoint(ipInfo.primaryVertex()->x(),
 		                 ipInfo.primaryVertex()->y(),
 		                 ipInfo.primaryVertex()->z());
+//$$
+       float PVtime = -10.;
+       if (havePv) PVtime = ipInfo.primaryVertex()->t();
+//$$
 
 	btag::Vertices::VertexType vtxType = btag::Vertices::NoVertex;
 
@@ -468,7 +490,8 @@ GhostTrackComputer::operator () (const CandIPTagInfo &ipInfo,
 
 		// filter track
 
-		if (!trackSelector(track, data, *jet, pv))
+//$$		if (!trackSelector(track, data, *jet, pv))
+		if (!trackSelector(track, data, *jet, pv, PVtime))
 			continue;
 
 		// add track to kinematics for all tracks in jet
@@ -488,7 +511,8 @@ GhostTrackComputer::operator () (const CandIPTagInfo &ipInfo,
       const Track * pairTrackPtr = reco::btag::toTrack(tracks[pairIdx]);
       const Track &pairTrack = *pairTrackPtr;
 
-			if (!trackSelector(pairTrack, pairTrackData, *jet, pv))
+//$$			if (!trackSelector(pairTrack, pairTrackData, *jet, pv))
+			if (!trackSelector(pairTrack, pairTrackData, *jet, pv, PVtime))
 				continue;
 
       trackPairV0Test[1] = pairTrackPtr;

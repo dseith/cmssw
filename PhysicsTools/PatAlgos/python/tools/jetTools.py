@@ -303,15 +303,18 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
 
     ## check if and under what conditions to re-run IVF
     runIVFforCTagOnly = False
-    ivfcTagInfos = ['pfInclusiveSecondaryVertexFinderCvsLTagInfos', 'pfInclusiveSecondaryVertexFinderNegativeCvsLTagInfos']
+#$$    ivfcTagInfos = ['pfInclusiveSecondaryVertexFinderCvsLTagInfos', 'pfInclusiveSecondaryVertexFinderNegativeCvsLTagInfos']
+    ivfcTagInfos = ['pfInclusiveSecondaryVertexFinderCvsLTagInfos']
     ## if MiniAOD and running c tagging
-    if pvSource.getModuleLabel() == 'offlineSlimmedPrimaryVertices' and any(i in requiredTagInfos for i in ivfcTagInfos) and not runIVF:
+#$$$$$$    if pvSource.getModuleLabel() == 'offlineSlimmedPrimaryVertices' and any(i in requiredTagInfos for i in ivfcTagInfos) and not runIVF:
+    if pvSource.getModuleLabel() == 'offlineSlimmedPrimaryVertices4D' and any(i in requiredTagInfos for i in ivfcTagInfos) and not runIVF:
         runIVFforCTagOnly = True
         runIVF = True
         sys.stderr.write("-------------------------------------------------------------------\n")
         sys.stderr.write(" Info: To run c tagging on MiniAOD, c-tag-specific IVF secondary\n")
         sys.stderr.write("       vertices will be remade.\n")
         sys.stderr.write("-------------------------------------------------------------------\n")
+
     ## adjust svSources
     if runIVF and btagPrefix != '':
         if runIVFforCTagOnly:
@@ -749,7 +752,8 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
     ## if re-running IVF
     if runIVF:
         if not tightBTagNTkHits:
-            if pvSource.getModuleLabel() == 'offlineSlimmedPrimaryVertices': ## MiniAOD case
+#$$$$$$            if pvSource.getModuleLabel() == 'offlineSlimmedPrimaryVertices': ## MiniAOD case
+            if pvSource.getModuleLabel() == 'offlineSlimmedPrimaryVertices4D': ## MiniAOD case
                 if not runIVFforCTagOnly: rerunningIVFMiniAOD()
             else:
                 rerunningIVF()
@@ -763,7 +767,8 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
                     _temp = getattr(process, btagPrefix+'inclusiveCandidateVertexFinder')
                     _temp.minHits = cms.uint32(8)
             ## MiniAOD case
-            if pvSource.getModuleLabel() == 'offlineSlimmedPrimaryVertices':
+#$$$$$$            if pvSource.getModuleLabel() == 'offlineSlimmedPrimaryVertices':
+            if pvSource.getModuleLabel() == 'offlineSlimmedPrimaryVertices4D':
                 if hasattr( process, btagPrefix+'inclusiveCandidateVertexFinder' ):
                     _temp = getattr(process, btagPrefix+'inclusiveCandidateVertexFinder')
                     _temp.primaryVertices = pvSource
@@ -784,7 +789,8 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
                     _temp = getattr(process, btagPrefix+'inclusiveCandidateVertexFinderCvsL')
                     _temp.minHits = cms.uint32(8)
             ## MiniAOD case
-            if pvSource.getModuleLabel() == 'offlineSlimmedPrimaryVertices':
+#$$$$$$            if pvSource.getModuleLabel() == 'offlineSlimmedPrimaryVertices':
+            if pvSource.getModuleLabel() == 'offlineSlimmedPrimaryVertices4D':
                 if hasattr( process, btagPrefix+'inclusiveCandidateVertexFinderCvsL' ):
                     _temp = getattr(process, btagPrefix+'inclusiveCandidateVertexFinderCvsL')
                     _temp.primaryVertices = pvSource
@@ -832,7 +838,7 @@ class AddJetCollection(ConfigToolBase):
 
     def __init__(self):
         """
-        Initialize elements of the class. Note that the tool needs to be derived from ConfigToolBase to be usable in the configEditor.
+        Initialize elements of the class. Note tsys.stderr.writehat the tool needs to be derived from ConfigToolBase to be usable in the configEditor.
         """
         ## initialization of the base class
         ConfigToolBase.__init__(self)

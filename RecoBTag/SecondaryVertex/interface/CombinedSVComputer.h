@@ -34,7 +34,6 @@
 #include "RecoBTag/SecondaryVertex/interface/TrackSorting.h"
 #include "RecoBTag/SecondaryVertex/interface/TrackKinematics.h"
 
-
 #define range_for(i, x) \
         for(int i = (x).begin; i != (x).end; i += (x).increment)
 
@@ -110,6 +109,10 @@ void CombinedSVComputer::fillCommonVariables(reco::TaggingVariableList & vars, r
                 pv = GlobalPoint(ipInfo.primaryVertex()->x(),
                                  ipInfo.primaryVertex()->y(),
                                  ipInfo.primaryVertex()->z());
+//$$
+       float PVtime = -10.;
+       if (havePv) PVtime = ipInfo.primaryVertex()->t();
+//$$
 
         btag::Vertices::VertexType vtxType = btag::Vertices::NoVertex;
 
@@ -166,14 +169,16 @@ void CombinedSVComputer::fillCommonVariables(reco::TaggingVariableList & vars, r
                 //allKinematics.add(track); // would make more sense for some variables, e.g. vertexEnergyRatio nicely between 0 and 1, but not necessarily the best option for the discriminating power...
 
                 // filter track -> this track selection can be tighter than the vertex track selection (used to fill the track related variables...)
-                if (!trackSelector(track, data, *jet, pv))
+//$$                if (!trackSelector(track, data, *jet, pv))
+                if (!trackSelector(track, data, *jet, pv, PVtime))
                         continue;
 
                 // add track to kinematics for all tracks in jet
                 allKinematics.add(track);
 
                 // if no vertex was reconstructed, attempt pseudo vertex
-                if (vtxType == btag::Vertices::NoVertex && trackPseudoSelector(track, data, *jet, pv)) {
+//$$                if (vtxType == btag::Vertices::NoVertex && trackPseudoSelector(track, data, *jet, pv)) {
+                if (vtxType == btag::Vertices::NoVertex && trackPseudoSelector(track, data, *jet, pv, PVtime)) {
                         pseudoVertexTracks.push_back(track);
                         vertexKinematics.add(track);
                 }
@@ -189,7 +194,8 @@ void CombinedSVComputer::fillCommonVariables(reco::TaggingVariableList & vars, r
                         const reco::btag::TrackIPData &pairTrackData = ipData[pairIdx];
                         const TrackRef &pairTrack = tracks[pairIdx];
 
-                        if (!trackSelector(pairTrack, pairTrackData, *jet, pv))
+//$$                        if (!trackSelector(pairTrack, pairTrackData, *jet, pv))
+                        if (!trackSelector(pairTrack, pairTrackData, *jet, pv, PVtime))
                                 continue;
 
                         trackPairV0Test[1] = pairTrack;

@@ -19,25 +19,30 @@ class TrackSelector {
 	bool operator() (const reco::Track &track,
 	                 const reco::btag::TrackIPData &ipData,
 	                 const reco::Jet &jet,
-	                 const GlobalPoint &pv) const;
+//$$	                 const GlobalPoint &pv) const;
+	                 const GlobalPoint &pv, float PVtime) const;
 
 	bool operator() (const reco::CandidatePtr &track,
 	                 const reco::btag::TrackIPData &ipData,
 	                 const reco::Jet &jet,
-	                 const GlobalPoint &pv) const;
+//$$	                 const GlobalPoint &pv) const;
+	                 const GlobalPoint &pv, float PVtime) const;
 
 	inline
 	bool operator() (const reco::TrackRef &track,
 	                 const reco::btag::TrackIPData &ipData,
 	                 const reco::Jet &jet,
-	                 const GlobalPoint &pv) const
-	{ return (*this)(*track, ipData, jet, pv); }
+//$$	                 const GlobalPoint &pv) const
+	                 const GlobalPoint &pv, float PVtime) const
+//$$	{ return (*this)(*track, ipData, jet, pv); }
+	{ return (*this)(*track, ipData, jet, pv, PVtime); }
 
     private:
 	bool trackSelection(const reco::Track &track,
 	                    const reco::btag::TrackIPData &ipData,
 	                    const reco::Jet &jet,
-	                    const GlobalPoint &pv) const;
+//$$	                    const GlobalPoint &pv) const;
+	                    const GlobalPoint &pv, float PVtime) const;
 
 	bool				selectQuality;
 	reco::TrackBase::TrackQuality	quality;

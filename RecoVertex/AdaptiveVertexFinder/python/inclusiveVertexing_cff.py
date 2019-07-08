@@ -34,8 +34,8 @@ inclusiveCandidateVertexing = cms.Sequence(inclusiveCandidateVertexingTask)
 
 #relaxed IVF reconstruction cuts for candidate-based ctagging
 inclusiveCandidateVertexFinderCvsL = inclusiveCandidateVertexFinder.clone(
-   vertexMinDLen2DSig = 1.25,
-   vertexMinDLenSig = 0.25
+#$$   vertexMinDLen2DSig = 1.25,
+#$$   vertexMinDLenSig = 0.25
 )
 
 candidateVertexMergerCvsL = candidateVertexMerger.clone(

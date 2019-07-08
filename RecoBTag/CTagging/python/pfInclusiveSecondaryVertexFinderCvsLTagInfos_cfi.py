@@ -8,7 +8,12 @@ pfInclusiveSecondaryVertexFinderCvsLTagInfos = pfSecondaryVertexTagInfos.clone(
    extSVDeltaRToJet = cms.double(0.3),
    useExternalSV    = cms.bool(True)
 )
+#$$
 pfInclusiveSecondaryVertexFinderCvsLTagInfos.vertexCuts.fracPV = 0.79 ## 4 out of 5 is discarded
-pfInclusiveSecondaryVertexFinderCvsLTagInfos.vertexCuts.distSig2dMin = 1.5 # relaxed w.r.t taginfos used in btagger
+pfInclusiveSecondaryVertexFinderCvsLTagInfos.vertexCuts.distSig2dMin = 2.0
+## as in Charm tagging
+#pfInclusiveSecondaryVertexFinderCvsLTagInfos.vertexCuts.fracPV = 0.79 ## 4 out of 5 is discarded
+#pfInclusiveSecondaryVertexFinderCvsLTagInfos.vertexCuts.distSig2dMin = 1.5 # relaxed w.r.t taginfos used in btagger
+#$$
 
 

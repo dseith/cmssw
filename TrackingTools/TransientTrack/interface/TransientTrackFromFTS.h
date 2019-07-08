@@ -13,7 +13,8 @@
 
 namespace reco {
 
-  class TransientTrackFromFTS : public BasicTransientTrack {
+//$$  class TransientTrackFromFTS : public BasicTransientTrack {
+  class TransientTrackFromFTS : public Track, public BasicTransientTrack {
   public:
 
     TransientTrackFromFTS(); 
@@ -70,7 +71,8 @@ namespace reco {
     TrajectoryStateClosestToBeamLine stateAtBeamLine() const override;
     
     double timeExt() const override { return ( hasTime ? timeExt_ : std::numeric_limits<double>::quiet_NaN() ); }
-    double dtErrorExt() const override { return ( hasTime ? dtErrorExt_ : std::numeric_limits<double>::quiet_NaN() ); }
+//$$    double dtErrorExt() const override { return ( hasTime ? dtErrorExt_ : std::numeric_limits<double>::quiet_NaN() ); }
+    double dtErrorExt() const override { return ( hasTime ? 0.035 : std::numeric_limits<double>::quiet_NaN() ); }
 
   private:
 

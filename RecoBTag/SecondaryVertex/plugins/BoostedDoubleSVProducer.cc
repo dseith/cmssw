@@ -185,6 +185,11 @@ BoostedDoubleSVProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSet
      GlobalPoint pv(0.,0.,0.);
      if ( ipTagInfo.primaryVertex().isNonnull() )
        pv = GlobalPoint(vertexRef->x(),vertexRef->y(),vertexRef->z());
+//$$
+     bool havePv = ipTagInfo.primaryVertex().isNonnull();
+     float PVtime = -10.;
+     if (havePv) PVtime = ipTagInfo.primaryVertex()->t();
+//$$
 
      const std::vector<reco::CandidatePtr> & selectedTracks = ipTagInfo.selectedTracks();
      const std::vector<reco::btag::TrackIPData> & ipData = ipTagInfo.impactParameterData();
@@ -206,7 +211,8 @@ BoostedDoubleSVProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSet
 
        const reco::btag::TrackIPData &data = ipData[itt];
        bool isSelected = false;
-       if (trackSelector(trackRef, data, *jet, pv)) isSelected = true;
+//$$       if (trackSelector(trackRef, data, *jet, pv)) isSelected = true;
+       if (trackSelector(trackRef, data, *jet, pv, PVtime)) isSelected = true;
 
        // check if the track is from V0
        bool isfromV0 = false, isfromV0Tight = false;
@@ -227,7 +233,8 @@ BoostedDoubleSVProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSet
          {
            isfromV0 = true;
 
-           if ( trackSelector(pairTrackRef, pairTrackData, *jet, pv) )
+//$$           if ( trackSelector(pairTrackRef, pairTrackData, *jet, pv) )
+           if ( trackSelector(pairTrackRef, pairTrackData, *jet, pv, PVtime) )
              isfromV0Tight = true;
          }
 
