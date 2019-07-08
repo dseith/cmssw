@@ -115,7 +115,7 @@ TrackSelector::trackSelection(const Track &track,
      track.hitPattern().numberOfValidHits() >= (int)minTotalHits) &&
     track.normalizedChi2() < maxNormChi2 &&
 //$$$$$$
-    (track.covt0t0() <= 0. || abs( track.t0() - PVtime ) < 0.105) && 
+//$$$$$$    (track.covt0t0() <= 0. || abs( track.t0() - PVtime ) < 0.105) && 
 //$$$$$$
     std::abs(ipData.distanceToJetAxis.value()) <= maxDistToAxis &&
     (ipData.closestToJetAxis - pv).mag() <= maxDecayLen &&

@@ -59,7 +59,8 @@ class TemplatedInclusiveVertexFinder : public edm::stream::EDProducer<> {
           }	  
 	  
 	  pdesc.add<double>("maximumLongitudinalImpactParameter",0.3);
-	  pdesc.add<double>("maximumTimeSignificance",3.0);
+//$$$$$$	  pdesc.add<double>("maximumTimeSignificance",3.0);
+	  pdesc.add<double>("maximumTimeSignificance",1000000); // for noMTD test
 	  pdesc.add<double>("minPt",0.8);
 	  pdesc.add<unsigned int>("maxNTracks",30);
 	  //clusterizer pset
@@ -72,7 +73,8 @@ class TemplatedInclusiveVertexFinder : public edm::stream::EDProducer<> {
 	  clusterizer.add<double>("clusterMaxSignificance",4.5);
 	  clusterizer.add<double>("distanceRatio",20.0);
 	  clusterizer.add<double>("clusterMinAngleCosine",0.5);
-	  clusterizer.add<double>("maxTimeSignificance",3.5);
+//$$$$$$	  clusterizer.add<double>("maxTimeSignificance",3.5);
+	  clusterizer.add<double>("maxTimeSignificance",1000000); // for noMTD test
 	  pdesc.add<edm::ParameterSetDescription>("clusterizer", clusterizer);
 	  // vertex and fitter config
 	  pdesc.add<double>("vertexMinAngleCosine",0.95);
@@ -198,6 +200,9 @@ void TemplatedInclusiveVertexFinder<InputContainer,VTX>::produce(edm::Event &eve
 	GlobalPoint ppv(pv.position().x(),pv.position().y(),pv.position().z());
         
 	std::vector<TransientTrack> tts;
+//$$
+//  std::cout << std::endl;
+//$$
         //Fill transient track vector 
 	for(typename InputContainer::const_iterator track = tracks->begin();
 	    track != tracks->end(); ++track) {
@@ -213,10 +218,21 @@ void TemplatedInclusiveVertexFinder<InputContainer,VTX>::produce(edm::Event &eve
 		  auto tError = std::sqrt( std::pow(tt.dtErrorExt(),2) + pv.covariance(3,3) );
 		  auto dtSig = std::abs(tt.timeExt() - pv.t())/tError;
 		  if( dtSig > maxTimeSig ) continue;
+//$$
+// //  if ( tt.track().pt() > 4. )
+// //  if ( tt.track().pt() > 1. && dtSig > 3. )
+//  if ( abs(tt.track().eta()) < 3.0 )
+//  std::cout << " track IVF pt eta phi t err atPV sig " 
+//  << tt.track().pt() << " " << tt.track().eta() << " " << tt.track().phi() << "    " 
+//  << tt.timeExt() << " " << tError << " " << tt.timeExt()-pv.t() << " " << dtSig << std::endl;
+//$$
 		}
 		tt.setBeamSpot(*beamSpot);
 		tts.push_back(tt);
 	}
+//$$
+//  std::cout << std::endl;
+//$$
         std::vector<TracksClusteringFromDisplacedSeed::Cluster> clusters = clusterizer->clusters(pv,tts);
 
         //Create BS object from PV to feed in the AVR
@@ -273,6 +289,11 @@ void TemplatedInclusiveVertexFinder<InputContainer,VTX>::produce(edm::Event &eve
 			std::cout << " pos: " << vv.position() << " error: " <<vv.xError() << " " << vv.yError() << " " << vv.zError() << std::endl;
 			std::cout << " time: " << vv.time() << " error: " << vv.tError() << std::endl;
 #endif
+//$$
+//  std::cout << " SV chi2 dlen " << v->normalisedChiSquared() << " ndof: " <<v->degreesOfFreedom() 
+//            << " " << dlen.value() << std::endl;
+//$$
+
 			GlobalVector dir;  
 			std::vector<reco::TransientTrack> ts = v->originalTracks();
 			for(std::vector<reco::TransientTrack>::const_iterator i = ts.begin();
@@ -285,6 +306,14 @@ void TemplatedInclusiveVertexFinder<InputContainer,VTX>::produce(edm::Event &eve
 					<< (*i).track().phi() << "], "
 					<< w << std::endl;
 #endif
+//$$
+// 		  auto tError = std::sqrt( std::pow((*i).dtErrorExt(),2) + pv.covariance(3,3) );
+// 		  auto dtSig = std::abs((*i).timeExt() - pv.t())/tError;
+//  if ( abs((*i).track().eta()) < 3.0 )
+//  std::cout << " SV track  pt eta phi t err atPV sig " 
+//  << (*i).track().pt() << " " << (*i).track().eta() << " " << (*i).track().phi() << "    " 
+//  << (*i).timeExt() << " " << tError << " " << (*i).timeExt()-pv.t() << " " << dtSig << std::endl;
+//$$
                         }
 			GlobalPoint sv((*v).position().x(),(*v).position().y(),(*v).position().z());
 			float vscal = dir.unit().dot((sv-ppv).unit());
@@ -297,6 +326,11 @@ void TemplatedInclusiveVertexFinder<InputContainer,VTX>::produce(edm::Event &eve
 #ifdef VTXDEBUG
 	                        std::cout << "ADDED" << std::endl;
 #endif
+//$$
+//  std::cout << " SV chi2 ndof dlensig " << v->normalisedChiSquared() << " " << v->degreesOfFreedom() 
+//            << " " << dlen.significance() 
+// 	   << std::endl;
+//$$
                         }
                       
                    }

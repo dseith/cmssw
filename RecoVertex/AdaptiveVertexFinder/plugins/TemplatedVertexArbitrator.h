@@ -78,7 +78,8 @@ class TemplatedVertexArbitrator : public edm::stream::EDProducer<> {
 	  pdesc.add<int>("trackMinLayers",4);
 	  pdesc.add<double>("trackMinPt",0.4);
 	  pdesc.add<int>("trackMinPixels",1);
-	  pdesc.add<double>("maxTimeSignificance",3.5);
+//$$$$$$	  pdesc.add<double>("maxTimeSignificance",3.5);
+	  pdesc.add<double>("maxTimeSignificance",1000000); // for noMTD test
           if( std::is_same<VTX,reco::Vertex>::value ) {
             cdesc.add("trackVertexArbitratorDefault",pdesc); 
           } else if (  std::is_same<VTX,reco::VertexCompositePtrCandidate>::value ) {
