@@ -38,6 +38,7 @@
 
 #include "DataFormats/BTauReco/interface/TrackIPTagInfo.h"
 #include "DataFormats/BTauReco/interface/SecondaryVertexTagInfo.h"
+#include <SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h>
 
 #include <map>
 
@@ -63,6 +64,9 @@ private:
    // ----------member data ---------------------------
         const edm::EDGetTokenT<std::vector<SVTag> > svSrc_;
         CombinedSVComputer computer_;
+
+        edm::EDGetTokenT<reco::VertexCollection> vtxToken_;
+    edm::EDGetTokenT<std::vector<PileupSummaryInfo>> puToken_;
 };
 
 //
@@ -83,6 +87,10 @@ TemplatedDeepNNTagInfoProducer<IPTag,SVTag>::TemplatedDeepNNTagInfoProducer(cons
   computer_(iConfig.getParameter<edm::ParameterSet>("computer"))
 {
   produces<std::vector<reco::ShallowTagInfo> >();
+  vtxToken_ = consumes<reco::VertexCollection>(
+                    edm::InputTag("offlineSlimmedPrimaryVertices4D"));
+  puToken_ = consumes<std::vector<PileupSummaryInfo >>(edm::InputTag("slimmedAddPileupInfo"));
+
 }
 
 template<typename IPTag, typename SVTag>
@@ -107,9 +115,29 @@ void TemplatedDeepNNTagInfoProducer<IPTag,SVTag>::produce(edm::Event& iEvent, co
   edm::Handle<std::vector<SVTag> > svTagInfos;
   iEvent.getByToken(svSrc_, svTagInfos);
 
+  edm::Handle<reco::VertexCollection> vertices;
+  iEvent.getByToken(vtxToken_, vertices);
+
+  edm::Handle<std::vector <PileupSummaryInfo> > PUInfo;
+  iEvent.getByToken(puToken_, PUInfo);
+
   // create the output collection
   auto tagInfos = std::make_unique<std::vector<reco::ShallowTagInfo> >();
-  
+
+  auto npv_0_z = vertices->at(0).z();
+
+  float PUrho = 0;
+  std::vector<PileupSummaryInfo>::const_iterator ipu;
+  for (ipu = PUInfo->begin(); ipu != PUInfo->end(); ++ipu) {
+      if ( ipu->getBunchCrossing() != 0 ) continue; // storing detailed PU info only for BX=0
+
+      for (unsigned int i=0; i<ipu->getPU_zpositions().size(); ++i) {
+          auto PU_z = (ipu->getPU_zpositions())[i];
+          if ( std::abs(PU_z - npv_0_z) < 1) PUrho++;
+      }
+  }	
+  PUrho /= 20.;
+
   // loop over TagInfos
   for(auto iterTI = svTagInfos->begin(); iterTI != svTagInfos->end(); ++iterTI) {
     // get TagInfos
@@ -129,6 +157,8 @@ void TemplatedDeepNNTagInfoProducer<IPTag,SVTag>::produce(edm::Event& iEvent, co
     if(!vars.checkTag(reco::btau::vertexNTracks))
       vars.insert(reco::btau::vertexNTracks, 0);
     
+    vars.insert(reco::btau::PUrho, PUrho);
+
     tagInfos->emplace_back(
 			   vars,
 			   svTagInfo.jet()

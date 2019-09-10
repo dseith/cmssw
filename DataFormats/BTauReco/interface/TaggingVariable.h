@@ -164,6 +164,7 @@ namespace reco {
 
       algoDiscriminator,                        // discriminator output of an algorithm
 
+      PUrho,
       lastTaggingVariable
     };
   }

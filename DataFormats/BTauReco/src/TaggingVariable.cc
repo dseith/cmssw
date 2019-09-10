@@ -138,6 +138,7 @@ const char* const TaggingVariableDescription[] = {
   /* [Jet_JP]                                   = */ "JP Tagger discriminator",
 
   /* [algoDiscriminator]                        = */ "discriminator output of an algorithm",
+    "PUrho",
 
   /* [lastTaggingVariable]                      = */ ""
 };
@@ -274,6 +275,8 @@ const char* const TaggingVariableTokens[] = {
   /* [Jet_JP]                                   = */ "Jet_JP",
 
   /* [algoDiscriminator]                        = */ "algoDiscriminator",
+
+    "PUrho",
 
   /* [lastTaggingVariable]                      = */ "lastTaggingVariable"
 };
