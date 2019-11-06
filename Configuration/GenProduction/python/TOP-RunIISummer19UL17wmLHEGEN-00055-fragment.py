@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
     # args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/st_tch_4f_ckm_NLO_top_powheg_madspin_F18/st_tch_4f_ckm_NLO_top_powheg_madspin_F18_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz'),
-    args = cms.vstring("/ceph/dseith/mc_gen/more_couplings/st_tch_top_slc7_amd64_gcc700_CMSSW_10_2_17_tarball.tar.xz"),
+    args = cms.vstring("data/st_tch_top_slc7_amd64_gcc700_CMSSW_10_2_17_tarball.tar.xz"),
     # args = cms.vstring("/ceph/dseith/mc_gen/st_tch_top_slc7_amd64_gcc700_CMSSW_10_2_17_tarball.tar.xz"),
     nEvents = cms.untracked.uint32(5000),
     numberOfParameters = cms.uint32(1),

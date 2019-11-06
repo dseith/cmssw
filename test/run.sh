@@ -1,5 +1,5 @@
 seed=$(($(date +%s) % 10000 + 1))
-nevents=20000
+nevents=100
 echo $seed
 
 source settings18.txt
