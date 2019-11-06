@@ -1,0 +1,3 @@
+conditions=106X_mcRun2_asymptotic_v3 
+era=Run2_2016 
+beamspot=Realistic50ns13TeVCollision

@@ -1,0 +1,29 @@
+fileout_gen=file:TOP_gen.root
+fileout_sim=file:TOP_sim.root
+fileout_premix=file:TOP_premix.root
+fileout_hlt=file:TOP_hlt.root
+fileout_aod=file:TOP_aod.root
+fileout_miniaod=file:TOP_miniaod.root
+fileout_nanoaod=file:TOP_nanoaod.root
+
+python_filename_gen=TOP_gen_cfg.py
+python_filename_sim=TOP_sim_cfg.py
+python_filename_premix=TOP_premix_cfg.py
+python_filename_aod=TOP_aod_cfg.py
+python_filename_miniaod=TOP_miniaod_cfg.py
+python_filename_nanoaod=TOP_nanoaod_cfg.py
+
+era=Run2_2017
+conditions=106X_mc2017_realistic_v6
+beamspot=Realistic25ns13TeVEarly2017Collision
+configuration=Configuration/GenProduction/python/TOP-RunIISummer19UL17wmLHEGEN-00055-fragment.py
+pileup_input="dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW"
+hltstep=HLT:2e34v40
+# pdmV:
+# 
+#  GEN-SIM Monte Carlo samples produced in CMSSW_9_3_X are processed with assuming:
+# 
+#     25 ns bunch spacing and beamspot "Realistic25ns13TeVEarly2017Collision"
+#     asymptotic AlCa conditions (unless otherwise requested): 93X_mc2017_realistic_v3
+#     The pileup scenario used is: 2017_25ns_WinterMC_PUScenarioV1_PoissonOOTPU (Link)
+#     The premix library used is: "/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW" 

@@ -1,0 +1,36 @@
+fileout_gen=file:/ceph/dseith/mc_gen/more_couplings/bms3/TOP_gen.root
+fileout_sim=file:TOP_sim.root
+fileout_premix=file:TOP_premix.root
+fileout_hlt=file:TOP_hlt.root
+fileout_aod=file:TOP_aod.root
+fileout_miniaod=file:TOP_miniaod.root
+fileout_nanoaod=file:TOP_nanoaod.root
+
+python_filename_gen=TOP_gen_cfg.py
+python_filename_sim=TOP_sim_cfg.py
+python_filename_premix=TOP_premix_cfg.py
+python_filename_hlt=TOP_hlt_cfg.py
+python_filename_aod=TOP_aod_cfg.py
+python_filename_miniaod=TOP_miniaod_cfg.py
+python_filename_nanoaod=TOP_nanoaod_cfg.py
+
+era=Run2_2018
+conditions=106X_upgrade2018_realistic_v4
+beamspot=Realistic25ns13TeVEarly2018Collision 
+configuration=Configuration/GenProduction/python/TOP-RunIISummer19UL17wmLHEGEN-00055-fragment.py
+# pileup_input="dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-PUFull18_102X_upgrade2018_realistic_v11-v1/GEN-SIM-DIGI-RAW"
+# pileup_input="dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-PUAutumn18_102X_upgrade2018_realistic_v15-v1/GEN-SIM-DIGI-RAW"
+pileup_input=/store/mc/RunIISummer17PrePremix/Neutrino_E-10_gun/GEN-SIM-DIGI-RAW/PUAutumn18_102X_upgrade2018_realistic_v15-v1/120040/687E592F-0764-6B45-8E9F-7070637C763E.root
+hltstep=HLT:@relval2018
+# The pileup scenario is: 2018_25ns_JuneProjectionFull18_PoissonOOTPU
+
+
+# pdmV:
+#
+# GEN-SIM Monte Carlo samples produced in 10_2_7 are processed with assuming: 
+# 
+#     25 ns bunch spacing and beamspot: Realistic25ns13TeVEarly2018Collision
+#     asymptotic AlCa conditions (unless otherwise requested): 102X_upgrade2018_realistic_v11 (and 102X_upgrade2018_realistic_v15 for DR and miniAOD)
+#     The pileup scenario is: 2018_25ns_JuneProjectionFull18_PoissonOOTPU
+#     The premix library used is: "/Neutrino_E-10_gun/RunIISummer17PrePremix-PUFull18_102X_upgrade2018_realistic_v11-v1/GEN-SIM-DIGI-RAW" 
+
