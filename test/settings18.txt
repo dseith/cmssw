@@ -1,4 +1,5 @@
-fileout_gen=file:/ceph/dseith/mc_gen/more_couplings/bms3/TOP_gen.root
+# fileout_gen=file:/ceph/dseith/mc_gen/more_couplings/bms3/TOP_gen_antitop.root
+fileout_gen=file:TOP_gen_antitop.root
 fileout_sim=file:TOP_sim.root
 fileout_premix=file:TOP_premix.root
 fileout_hlt=file:TOP_hlt.root
