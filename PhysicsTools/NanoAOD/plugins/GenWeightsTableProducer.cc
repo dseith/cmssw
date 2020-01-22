@@ -106,6 +106,7 @@ namespace {
             std::string post = str.substr(match+1);
             return std::stof(pre) * std::pow(10.0f, std::stof(post));
         } else {
+            std::cout << str << std::endl;
             return std::stof(str);
         }
     }
@@ -248,6 +249,19 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
             const std::vector<std::string> & pdfWeightIDs   = weightChoice->pdfWeightIDs;
             const std::vector<std::string> & rwgtWeightIDs  = weightChoice->rwgtIDs;
 
+            // std::cout << "====================" << std::endl;
+            // for(auto const& w : scaleWeightIDs)
+            //     std::cout << w << " "; 
+            // std::cout << std::endl;
+            // for(auto const& w : pdfWeightIDs)
+            //     std::cout << w << " "; 
+            // std::cout << std::endl;
+            // for(auto const& w : rwgtWeightIDs)
+            //     std::cout << w << " "; 
+            // std::cout << std::endl;
+
+            // std::cout << "====================" << std::endl;
+
             double w0 = lheProd.originalXWGTUP();
 
             std::vector<double> wScale(scaleWeightIDs.size(), 1), wPDF(pdfWeightIDs.size(), 1), wRwgt(rwgtWeightIDs.size(), 1), wNamed(namedWeightIDs_.size(), 1);
@@ -292,159 +306,229 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
                 outNamed->addColumnValue<float>(namedWeightLabels_[i], wNamed[i], "LHE weight for id "+namedWeightIDs_[i]+", relative to nominal", nanoaod::FlatTable::FloatColumn, lheWeightPrecision_);
             }
 
-            // std::vector<std::string> eft_weight_names = {
-            //     "ctw_p1",
-            //     "ctw_m1",
-            //     "ctwi_p1",
-            //     "ctwi_m1"
-            // };
-            std::vector<std::string> eft_weight_names ={
-
-"ctw_m2p0",
-"ctw_m1p0",
-"ctw_m0p9",
-"ctw_m0p8",
-"ctw_m0p7",
-"ctw_m0p6",
-"ctw_m0p5",
-"ctw_m0p48",
-"ctw_m0p46",
-"ctw_m0p44",
-"ctw_m0p42",
-"ctw_m0p4",
-"ctw_m0p38",
-"ctw_m0p36",
-"ctw_m0p34",
-"ctw_m0p32",
-"ctw_m0p3",
-"ctw_m0p28",
-"ctw_m0p26",
-"ctw_m0p24",
-"ctw_m0p22",
-"ctw_m0p2",
-"ctw_m0p18",
-"ctw_m0p16",
-"ctw_m0p14",
-"ctw_m0p12",
-"ctw_m0p1",
-"ctw_m0p09",
-"ctw_m0p08",
-"ctw_m0p07",
-"ctw_m0p06",
-"ctw_m0p05",
-"ctw_m0p04",
-"ctw_m0p03",
-"ctw_m0p02",
-"ctw_m0p01",
-"ctw_p0p01",
-"ctw_p0p02",
-"ctw_p0p03",
-"ctw_p0p04",
-"ctw_p0p05",
-"ctw_p0p06",
-"ctw_p0p07",
-"ctw_p0p08",
-"ctw_p0p09",
-"ctw_p0p1",
-"ctw_p0p12",
-"ctw_p0p14",
-"ctw_p0p16",
-"ctw_p0p18",
-"ctw_p0p2",
-"ctw_p0p22",
-"ctw_p0p24",
-"ctw_p0p26",
-"ctw_p0p28",
-"ctw_p0p3",
-"ctw_p0p32",
-"ctw_p0p34",
-"ctw_p0p36",
-"ctw_p0p38",
-"ctw_p0p4",
-"ctw_p0p42",
-"ctw_p0p44",
-"ctw_p0p46",
-"ctw_p0p48",
-"ctw_p0p5",
-"ctw_p0p6",
-"ctw_p0p7",
-"ctw_p0p8",
-"ctw_p0p9",
-"ctw_p1p0",
-"ctw_p2p0",
-"ctwi_m2p0",
-"ctwi_m1p0",
-"ctwi_m0p9",
-"ctwi_m0p8",
-"ctwi_m0p7",
-"ctwi_m0p6",
-"ctwi_m0p5",
-"ctwi_m0p48",
-"ctwi_m0p46",
-"ctwi_m0p44",
-"ctwi_m0p42",
-"ctwi_m0p4",
-"ctwi_m0p38",
-"ctwi_m0p36",
-"ctwi_m0p34",
-"ctwi_m0p32",
-"ctwi_m0p3",
-"ctwi_m0p28",
-"ctwi_m0p26",
-"ctwi_m0p24",
-"ctwi_m0p22",
-"ctwi_m0p2",
-"ctwi_m0p18",
-"ctwi_m0p16",
-"ctwi_m0p14",
-"ctwi_m0p12",
-"ctwi_m0p1",
-"ctwi_m0p09",
-"ctwi_m0p08",
-"ctwi_m0p07",
-"ctwi_m0p06",
-"ctwi_m0p05",
-"ctwi_m0p04",
-"ctwi_m0p03",
-"ctwi_m0p02",
-"ctwi_m0p01",
-"ctwi_p0p01",
-"ctwi_p0p02",
-"ctwi_p0p03",
-"ctwi_p0p04",
-"ctwi_p0p05",
-"ctwi_p0p06",
-"ctwi_p0p07",
-"ctwi_p0p08",
-"ctwi_p0p09",
-"ctwi_p0p1",
-"ctwi_p0p12",
-"ctwi_p0p14",
-"ctwi_p0p16",
-"ctwi_p0p18",
-"ctwi_p0p2",
-"ctwi_p0p22",
-"ctwi_p0p24",
-"ctwi_p0p26",
-"ctwi_p0p28",
-"ctwi_p0p3",
-"ctwi_p0p32",
-"ctwi_p0p34",
-"ctwi_p0p36",
-"ctwi_p0p38",
-"ctwi_p0p4",
-"ctwi_p0p42",
-"ctwi_p0p44",
-"ctwi_p0p46",
-"ctwi_p0p48",
-"ctwi_p0p5",
-"ctwi_p0p6",
-"ctwi_p0p7",
-"ctwi_p0p8",
-"ctwi_p0p9",
-"ctwi_p1p0",
-"ctwi_p2p0"
-};
+            std::vector<std::string> eft_weight_names = {
+                    "SM",
+                    "ctW_1p87_ctWI_-0p24_cptb_-19p7_cptbI_16p44",
+                    "ctW_1p76_ctWI_0p33_cptb_6p86_cptbI_-16p64",
+                    "ctW_1p07_ctWI_-1p05_cptb_-18p77_cptbI_11p55",
+                    "ctW_-0p62_ctWI_0p49_cptb_4p63_cptbI_-14p06",
+                    "ctW_-1p27_ctWI_-1p54_cptb_-19p42_cptbI_-0p53",
+                    "ctW_1p86_ctWI_-1p74_cptb_1p64_cptbI_-1p36",
+                    "ctW_0p41_ctWI_-1p64_cptb_3p16_cptbI_-9p22",
+                    "ctW_0p23_ctWI_0p58_cptb_-0p76_cptbI_-5p79",
+                    "ctW_-1p0_ctWI_1p73_cptb_-1p86_cptbI_1p21",
+                    "ctW_-1p92_ctWI_0p03_cptb_-19p77_cptbI_-14p25",
+                    "ctW_-0p11_ctWI_-0p49_cptb_-17p83_cptbI_3p5",
+                    "ctW_-1p34_ctWI_0p23_cptb_-14p23_cptbI_17p49",
+                    "ctW_1p08_ctWI_1p83_cptb_-14p35_cptbI_-7p78",
+                    "ctW_-1p84_ctWI_-0p89_cptb_12p26_cptbI_-12p91",
+                    "ctW_-1p38_ctWI_1p82_cptb_-13p82_cptbI_13p36",
+                    "ctW_-1p84_ctWI_-0p46_cptb_-6p02_cptbI_-6p33",
+                    "ctW_1p27_ctWI_-0p1_cptb_11p32_cptbI_-1p17",
+                    "ctW_1p27_ctWI_1p53_cptb_-2p42_cptbI_11p24",
+                    "ctW_1p26_ctWI_-0p82_cptb_-15p04_cptbI_-12p58",
+                    "ctW_-0p26_ctWI_-1p52_cptb_1p19_cptbI_13p18",
+                    "ctW_-0p06_ctWI_1p27_cptb_6p26_cptbI_5p64",
+                    "ctW_-0p62_ctWI_0p81_cptb_12p4_cptbI_-13p71",
+                    "ctW_1p63_ctWI_-0p92_cptb_-13p81_cptbI_13p62",
+                    "ctW_0p88_ctWI_1p17_cptb_-2p13_cptbI_-17p17",
+                    "ctW_-0p42_ctWI_-1p81_cptb_-8p55_cptbI_-18p48",
+                    "ctW_0p03_ctWI_-1p65_cptb_17p31_cptbI_7p98",
+                    "ctW_-0p73_ctWI_1p78_cptb_-17p35_cptbI_-9p7",
+                    "ctW_-1p71_ctWI_-0p29_cptb_-11p92_cptbI_-4p13",
+                    "ctW_0p82_ctWI_1p55_cptb_0p02_cptbI_12p74",
+                    "ctW_-0p55_ctWI_1p43_cptb_0p6_cptbI_8p1",
+                    "ctW_-1p3_ctWI_0p34_cptb_-7p93_cptbI_12p51",
+                    "ctW_0p14_ctWI_-0p0_cptb_10p93_cptbI_1p96",
+                    "ctW_-0p66_ctWI_-1p48_cptb_4p98_cptbI_17p01",
+                    "ctW_1p37_ctWI_-1p72_cptb_-6p99_cptbI_-19p93",
+                    "ctW_0p7_ctWI_0p55_cptb_10p32_cptbI_-14p07",
+                    "ctW_-1p13_ctWI_-0p27_cptb_9p47_cptbI_-11p72",
+                    "ctW_1p29_ctWI_-0p48_cptb_14p97_cptbI_18p4",
+                    "ctW_0p15_ctWI_1p68_cptb_-3p12_cptbI_7p41",
+                    "ctW_1p39_ctWI_1p36_cptb_-16p29_cptbI_-9p59",
+                    "ctW_-0p36_ctWI_1p43_cptb_-8p93_cptbI_-15p45",
+                    "ctW_-0p5_ctWI_-1p14_cptb_8p65_cptbI_3p5",
+                    "ctW_-1p79_ctWI_1p51_cptb_-2p38_cptbI_11p08",
+                    "ctW_-1p34_ctWI_-0p77_cptb_-17p07_cptbI_-4p2",
+                    "ctW_-0p28_ctWI_0p73_cptb_-0p82_cptbI_-3p98",
+                    "ctW_-0p09_ctWI_-0p87_cptb_-5p22_cptbI_4p02",
+                    "ctW_-1p18_ctWI_0p08_cptb_17p19_cptbI_-1p7",
+                    "ctW_0p67_ctWI_0p64_cptb_12p05_cptbI_9p02",
+                    "ctW_0p64_ctWI_-1p59_cptb_-5p33_cptbI_11p76",
+                    "ctW_-1p74_ctWI_-1p44_cptb_16p21_cptbI_3p52",
+                    "ctW_1p92_ctWI_1p01_cptb_19p83_cptbI_-8p06",
+                    "ctW_0p74_ctWI_-0p68_cptb_17p84_cptbI_-8p25",
+                    "ctW_-1p22_ctWI_1p26_cptb_-8p84_cptbI_1p36",
+                    "ctW_0p41_ctWI_-0p64_cptb_-6p63_cptbI_-7p16",
+                    "ctW_-0p93_ctWI_1p04_cptb_3p57_cptbI_1p93",
+                    "ctW_1p3_ctWI_-0p97_cptb_-14p52_cptbI_-18p86",
+                    "ctW_-1p85_ctWI_1p96_cptb_18p95_cptbI_6p66",
+                    "ctW_1p96_ctWI_0p06_cptb_-2p62_cptbI_0p61",
+                    "ctW_-1p72_ctWI_1p04_cptb_-7p79_cptbI_7p92",
+                    "ctW_1p64_ctWI_-1p12_cptb_0p18_cptbI_6p13",
+                    "ctW_1p24_ctWI_0p73_cptb_-6p76_cptbI_2p57",
+                    "ctW_0p125_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_0p25_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_0p375_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_0p5_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_0p625_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_0p75_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_0p875_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_1p0_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_1p125_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_1p25_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_1p375_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_1p5_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_1p625_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_1p75_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_1p875_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_2p0_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_2p125_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_2p25_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_2p375_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_2p5_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-0p125_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-0p25_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-0p375_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-0p5_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-0p625_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-0p75_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-0p875_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-1p0_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-1p125_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-1p25_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-1p375_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-1p5_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-1p625_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-1p75_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-1p875_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-2p0_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-2p125_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-2p25_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-2p375_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_-2p5_ctWI_0p0_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p125_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p25_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p375_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p5_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p625_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p75_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p875_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_1p0_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_1p125_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_1p25_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_1p375_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_1p5_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_1p625_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_1p75_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_1p875_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_2p0_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_2p125_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_2p25_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_2p375_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_2p5_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-0p125_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-0p25_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-0p375_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-0p5_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-0p625_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-0p75_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-0p875_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-1p0_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-1p125_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-1p25_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-1p375_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-1p5_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-1p625_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-1p75_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-1p875_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-2p0_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-2p125_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-2p25_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-2p375_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_-2p5_cptb_0p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_1p25_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_2p5_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_3p75_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_5p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_6p25_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_7p5_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_8p75_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_10p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_11p25_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_12p5_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_13p75_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_15p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_16p25_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_17p5_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_18p75_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_20p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_21p25_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_22p5_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_23p75_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_25p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-1p25_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-2p5_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-3p75_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-5p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-6p25_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-7p5_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-8p75_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-10p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-11p25_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-12p5_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-13p75_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-15p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-16p25_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-17p5_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-18p75_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-20p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-21p25_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-22p5_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-23p75_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_-25p0_cptbI_0p0",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_1p25",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_2p5",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_3p75",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_5p0",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_6p25",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_7p5",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_8p75",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_10p0",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_11p25",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_12p5",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_13p75",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_15p0",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_16p25",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_17p5",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_18p75",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_20p0",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_21p25",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_22p5",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_23p75",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_25p0",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-1p25",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-2p5",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-3p75",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-5p0",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-6p25",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-7p5",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-8p75",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-10p0",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-11p25",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-12p5",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-13p75",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-15p0",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-16p25",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-17p5",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-18p75",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-20p0",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-21p25",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-22p5",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-23p75",
+                    "ctW_0p0_ctWI_0p0_cptb_0p0_cptbI_-25p0",
+                   };
 
 
             std::vector<double> wEFT(eft_weight_names.size(), 1);
@@ -455,7 +539,6 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
                 auto name = eft_weight_names[index];
                 auto pos = std::find_if(lheweights.begin(), lheweights.end(), [&name](const gen::WeightsInfo x){return x.id == name;});
                 auto weight = *pos;
-                // std::cout << weight.id <<  " " << weight.wgt << " " << w0 << " " << weight.wgt/w0 << std::endl;
                 wEFT[index] = weight.wgt / w0;
 
                 description += name + " [" + std::to_string(index) + "]; " ;
@@ -500,6 +583,7 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
             edm::Handle<LHERunInfoProduct> lheInfo;
 
             bool lheDebug = debugRun_.exchange(false); // make sure only the first thread dumps out this (even if may still be mixed up with other output, but nevermind)
+            // lheDebug=true;
             auto weightChoice = std::make_shared<DynamicWeightChoice>();
 
             // getByToken throws since we're not in the endRun (see https://github.com/cms-sw/cmssw/pull/18499)
@@ -510,6 +594,7 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
                     break;
                 }
             }
+
             if (lheInfo.isValid()) {
                 std::vector<ScaleVarWeight> scaleVariationIDs;
                 std::vector<PDFSetWeights>  pdfSetWeightIDs;
@@ -520,9 +605,14 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
                 std::regex weightgroupRwgt("<weightgroup\\s+(?:name|type)=\"(.*)\"\\s*>");
                 std::regex endweightgroup("</weightgroup>");
                 std::regex scalewmg26x("<weight\\s+(?:.*\\s+)?id=\"(\\d+)\"\\s*(?:lhapdf=\\d+|dyn=\\s*-?\\d+)?\\s*((?:[mM][uU][rR]|renscfact)=\"(\\S+)\"\\s+(?:[mM][uU][Ff]|facscfact)=\"(\\S+)\")(\\s+.*)?</weight>");
-                std::regex scalew("<weight\\s+(?:.*\\s+)?id=\"(\\d+)\">\\s*(?:lhapdf=\\d+|dyn=\\s*-?\\d+)?\\s*((?:mu[rR]|renscfact)=(\\S+)\\s+(?:mu[Ff]|facscfact)=(\\S+)(\\s+.*)?)</weight>");
+                // std::regex scalew("<weight\\s+(?:.*\\s+)?id=\"(\\d+)\">\\s*(?:lhapdf=\\d+|dyn=\\s*-?\\d+)?\\s*((?:mu[rR]|renscfact)=(\\S+)\\s+(?:mu[Ff]|facscfact)=(\\S+)(\\s+.*)?)</weight>");
+                std::regex scalew("<weight\\s*MUF=\"(\\S+)\"\\s*MUR=\"(\\S+)\"\\s*PDF=\"(\\d+)\"\\s*id=\"(\\d+)\">\\s*MUR=(?:\\S+)\\s*MUF=(?:\\S+)\\s*</weight>");
                 std::regex pdfw("<weight\\s+id=\"(\\d+)\">\\s*(?:PDF set|lhapdf|PDF|pdfset)\\s*=\\s*(\\d+)\\s*(?:\\s.*)?</weight>");
-                std::regex pdfwOld("<weight\\s+(?:.*\\s+)?id=\"(\\d+)\">\\s*Member \\s*(\\d+)\\s*(?:.*)</weight>");
+                // std::regex pdfwOld("<weight\\s+(?:.*\\s+)?id=\"(\\d+)\">\\s*Member \\s*(\\d+)\\s*(?:.*)</weight>");
+                // std::regex pdfwOld("<weight\\s+(?:.*\\s+)?id=\"(\\d+)\">\\s*Member \\s*(\\d+)\\s*(?:.*)</weight>");
+                std::regex pdfwOld("<weight\\s+MUF=\"(?:\\S+)\"\\s+MUR=\"(?:\\S+)\"\\s*PDF=\\s*\"(\\d+)\"\\s*id=\"(\\d+)\"\\s*>\\s*(?:PDF=(\\d+)\\s*MemberID=(\\d+))?\\s*(?:\\s.*)?</weight>");
+
+                // std::regex pdfwOld("<weight\\s+id=\"(\\d+)\"\\s*MUF=\"(?:\\S+)\"\\s*MUR=\"(?:\\S+)\"\\s*(?:PDF set|lhapdf|PDF|pdfset)\\s*=\\s*\"(\\d+)\"\\s*>\\s*(?:PDF=(\\d+)\\s*MemberID=(\\d+))?\\s*(?:\\s.*)?</weight>");
                 std::regex pdfwmg26x("<weight\\s+id=\"(\\d+)\"\\s*MUR=\"(?:\\S+)\"\\s*MUF=\"(?:\\S+)\"\\s*(?:PDF set|lhapdf|PDF|pdfset)\\s*=\\s*\"(\\d+)\"\\s*>\\s*(?:PDF=(\\d+)\\s*MemberID=(\\d+))?\\s*(?:\\s.*)?</weight>");
                 std::regex rwgt("<weight\\s+id=\"(.+)\">(.+)?(</weight>)?");
                 std::smatch groups;
@@ -635,10 +725,10 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
                                         if (lheDebug) std::cout << "    >>> PDF weight " << groups.str(1) << " for " << member << " = " << lhaID << std::endl;
                                         //if (member == 0) continue; // let's keep also the central value for now
                                         if (first) {
-                                            pdfSetWeightIDs.emplace_back(groups.str(1),lhaID);
+                                            pdfSetWeightIDs.emplace_back(groups.str(2),lhaID);
                                             first = false;
                                         } else {
-                                            pdfSetWeightIDs.back().add(groups.str(1),lhaID);
+                                            pdfSetWeightIDs.back().add(groups.str(2),lhaID);
                                         }
                                     } else if (std::regex_search(lines[iLine], endweightgroup)) {
                                         if (lheDebug) std::cout << ">>> Looks like the end of a weight group" << std::endl;
@@ -699,6 +789,19 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
                     //std::cout << "============= END [ " << iter->tag() << " ] ============ \n\n" << std::endl;
 
                     // ----- SCALE VARIATIONS -----
+                    // std::cout << scaleVariationIDs.size() << std::endl;
+                    // if(scaleVariationIDs.size() == 0){
+                    //     std::vector<float> ids = {2, 7, 12, 17, 26, 31, 36, 41};
+                    //     std::vector<float> muFs = {0.5, 1.0, 2.0, 0.5, 2.0, 0.5, 1.0, 2.0};
+                    //     std::vector<float> muRs = {0.5, 0.5, 0.5, 1.0, 1.0, 2.0, 2.0, 2.0};
+                    //     for(unsigned int idx=0; idx<ids.size(); idx++){
+                    //         auto id = ids[idx];
+                    //         auto muF = muFs[idx];
+                    //         auto muR = muRs[idx];
+                    //         std::cout << id << " " << muF << " " << muR << std::endl;
+                    //         scaleVariationIDs.emplace_back(std::to_string(id), "label", std::to_string(muR), std::to_string(muF));
+                    //     }
+                    // }
                     std::sort(scaleVariationIDs.begin(), scaleVariationIDs.end());
                     if (lheDebug) std::cout << "Found " << scaleVariationIDs.size() << " scale variations: " << std::endl;
                     std::stringstream scaleDoc; scaleDoc << "LHE scale variation weights (w_var / w_nominal); ";
@@ -712,6 +815,19 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
                     if (!scaleVariationIDs.empty()) weightChoice->scaleWeightsDoc = scaleDoc.str();
 
                     // ------ PDF VARIATIONS (take the preferred one) -----
+                    // if(pdfSetWeightIDs.size() == 0){
+                    //     bool first = true;
+                    //     for(unsigned int i=0; i<103; ++i){
+
+                    //         if(first){
+                    //             pdfSetWeightIDs.emplace_back(std::to_string(i+46), 306000+i);
+                    //             first=false;
+                    //         }
+                    //         else{
+                    //             pdfSetWeightIDs.back().add(std::to_string(i+46), 306000+i);
+                    //         }
+                    //     }
+                    // }
                     if (lheDebug) {
                         std::cout << "Found " << pdfSetWeightIDs.size() << " PDF set errors: " << std::endl;
                         for (const auto & pw : pdfSetWeightIDs) printf("lhaIDs %6d - %6d (%3lu weights: %s, ... )\n", pw.lhaIDs.first, pw.lhaIDs.second, pw.wids.size(), pw.wids.front().c_str());
