@@ -5,6 +5,9 @@
 #include "DataFormats/SiStripDetId/interface/StripSubdetector.h"
 
 #include "DataFormats/Math/interface/liblogintpack.h"
+//$$
+#include "TRandom.h"
+//$$
 using namespace logintpack;
 
 CovarianceParameterization pat::PackedCandidate::covarianceParameterization_;
@@ -189,10 +192,11 @@ void pat::PackedCandidate::unpackTrk() const {
   int ndof = numberOfHits + numberOfPixelHits - 5;
   LostInnerHits innerLost = lostInnerHits();
 
-  auto track = std::make_unique<reco::Track>(
-      normalizedChi2_ * ndof, ndof, *vertex_,
-      math::XYZVector(p3.x(), p3.y(), p3.z()), charge(), *(m_.load()),
-      reco::TrackBase::undefAlgorithm, reco::TrackBase::loose);
+//$$  auto track = std::make_unique<reco::Track>(normalizedChi2_ * ndof, ndof, *vertex_,math::XYZVector(p3.x(), p3.y(), p3.z()), charge(), *(m_.load()),reco::TrackBase::undefAlgorithm, reco::TrackBase::loose);
+    auto track = std::make_unique<reco::Track>(normalizedChi2_*ndof,ndof,*vertex_,math::XYZVector(p3.x(),p3.y(),p3.z()),charge(),*(m_.load()),reco::TrackBase::undefAlgorithm,reco::TrackBase::loose,time(),0,timeError());
+//$$    auto track = std::make_unique<reco::Track>(normalizedChi2_*ndof,ndof,*vertex_,math::XYZVector(p3.x(),p3.y(),p3.z()),charge(),*(m_.load()),reco::TrackBase::undefAlgorithm,reco::TrackBase::loose,time()+gRandom->Gaus(0,0.017),0,timeError()); // time resolution = 40 ps
+//$$    auto track = std::make_unique<reco::Track>(normalizedChi2_*ndof,ndof,*vertex_,math::XYZVector(p3.x(),p3.y(),p3.z()),charge(),*(m_.load()),reco::TrackBase::undefAlgorithm,reco::TrackBase::loose,time()+gRandom->Gaus(0,0.032),0,timeError()); // time resolution = 50 ps
+//$$    auto track = std::make_unique<reco::Track>(normalizedChi2_*ndof,ndof,*vertex_,math::XYZVector(p3.x(),p3.y(),p3.z()),charge(),*(m_.load()),reco::TrackBase::undefAlgorithm,reco::TrackBase::loose,time()+gRandom->Gaus(0,0.044),0,timeError()); // time resolution = 60 ps
   int i = 0;
   if (firstHit_ == 0) { // Backward compatible
     if (innerLost == validHitInFirstPixelBarrelLayer) {
