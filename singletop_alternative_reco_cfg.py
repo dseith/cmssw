@@ -21,7 +21,7 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 # process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 import sys
@@ -205,9 +205,9 @@ process.schedule = cms.Schedule(process.nanoAOD_step, process.endjob_step, proce
 from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
-# process.options.numberOfThreads=cms.untracked.uint32(48)
-# process.options.numberOfStreams=cms.untracked.uint32(0)
-# process.options.numberOfConcurrentLuminosityBlocks=cms.untracked.uint32(1)
+process.options.numberOfThreads=cms.untracked.uint32(48)
+process.options.numberOfStreams=cms.untracked.uint32(0)
+process.options.numberOfConcurrentLuminosityBlocks=cms.untracked.uint32(1)
 
 
 
