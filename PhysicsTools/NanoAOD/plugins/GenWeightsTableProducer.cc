@@ -139,6 +139,33 @@ namespace {
     };
 }
 
+
+std::vector<int> range(int start, int end){
+    std::vector<int> out;
+    for(int el=start; el<=end; ++el)
+        out.push_back(el);
+    return out;
+}
+
+
+std::vector<float> getPDFWeights(std::vector<int> ids, const LHEEventProduct & lheProd, float w0){
+
+    auto lheweights = lheProd.weights();
+    std::vector<float> weights(ids.size());
+
+    for(unsigned int index=0; index<ids.size(); ++index){
+        auto id = std::to_string(ids[index]);
+        
+        auto pos = std::find_if(lheweights.begin(), lheweights.end(), [&id](const gen::WeightsInfo x){return x.id == id;});
+        auto weight = *pos;
+        weights[index] = weight.wgt / w0;
+        // std::cout << id << ": " << weight.wgt / w0  << " " << std::endl;;
+    }
+    return weights;
+}
+
+
+
 class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<Counter>, edm::RunCache<DynamicWeightChoice>, edm::RunSummaryCache<Counter>, edm::EndRunProducer> {
     public:
         GenWeightsTableProducer( edm::ParameterSet const & params ) :
@@ -159,7 +186,13 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
             produces<nanoaod::FlatTable>("LHEReweighting");
             produces<nanoaod::FlatTable>("LHENamed");
             produces<nanoaod::FlatTable>("PS");
-            produces<nanoaod::FlatTable>("EFTWeights");
+            produces<nanoaod::FlatTable>("NNPDF31Weights");
+            produces<nanoaod::FlatTable>("NNPDF30Weights");
+            produces<nanoaod::FlatTable>("CT10nloWeights");
+            produces<nanoaod::FlatTable>("CT14nloWeights");
+            produces<nanoaod::FlatTable>("MSTW2008Weights");
+            produces<nanoaod::FlatTable>("MMHT2014Weights");
+            produces<nanoaod::FlatTable>("PDF4LHCWeights");
             produces<nanoaod::MergeableCounterTable,edm::Transition::EndRun>();
             if (namedWeightIDs_.size() != namedWeightLabels_.size()) {
                 throw cms::Exception("Configuration", "Size mismatch between namedWeightIDs & namedWeightLabels");
@@ -191,7 +224,7 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
             iEvent.put(std::move(out));
 
             // tables for LHE weights, may not be filled
-            std::unique_ptr<nanoaod::FlatTable> lheScaleTab, lhePdfTab, lheRwgtTab, lheNamedTab, eftWeightTab;
+            std::unique_ptr<nanoaod::FlatTable> lheScaleTab, lhePdfTab, lheRwgtTab, lheNamedTab, nnpdf31WeightTab, nnpdf30WeightTab, ct10nloWeightTab, ct14nloWeightTab, mstw2008WeightTab, mmht2014WeightTab, pdf4LHCWeightTab;
             std::unique_ptr<nanoaod::FlatTable> genPSTab;
 
             edm::Handle<LHEEventProduct> lheInfo;
@@ -205,7 +238,7 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
                 // get the dynamic choice of weights
                 const DynamicWeightChoice * weightChoice = runCache(iEvent.getRun().index());
                 // go fill tables
-                fillLHEWeightTables(counter, weightChoice, weight, *lheInfo, *genInfo, lheScaleTab, lhePdfTab, lheRwgtTab, lheNamedTab, genPSTab, eftWeightTab);
+                fillLHEWeightTables(counter, weightChoice, weight, *lheInfo, *genInfo, lheScaleTab, lhePdfTab, lheRwgtTab, lheNamedTab, genPSTab, nnpdf31WeightTab, nnpdf30WeightTab, ct10nloWeightTab, ct14nloWeightTab, mstw2008WeightTab, mmht2014WeightTab, pdf4LHCWeightTab);
             } else {
                 // Still try to add the PS weights
                 fillOnlyPSWeightTable(counter, weight, *genInfo, genPSTab);
@@ -214,7 +247,13 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
                 lhePdfTab.reset(new nanoaod::FlatTable(1, "LHEPdfWeights", true));
                 lheRwgtTab.reset(new nanoaod::FlatTable(1, "LHEReweightingWeights", true));
                 lheNamedTab.reset(new nanoaod::FlatTable(1, "LHENamedWeights", true));
-                eftWeightTab.reset(new nanoaod::FlatTable(1, "EFTWeights", true));
+                nnpdf31WeightTab.reset(new nanoaod::FlatTable(1, "NNPDF31Weights", true));
+                nnpdf30WeightTab.reset(new nanoaod::FlatTable(1, "NNPDF30Weights", true));
+                ct10nloWeightTab.reset(new nanoaod::FlatTable(1, "CT10nloWeights", true));
+                ct14nloWeightTab.reset(new nanoaod::FlatTable(1, "CT14nloWeights", true));
+                mstw2008WeightTab.reset(new nanoaod::FlatTable(1, "MSTW2008Weights", true));
+                mmht2014WeightTab.reset(new nanoaod::FlatTable(1, "MMHT2014Weights", true));
+                pdf4LHCWeightTab.reset(new nanoaod::FlatTable(1, "PDF4LHCWeights", true));
                 if (!hasIssuedWarning_.exchange(true)) {
                     edm::LogWarning("LHETablesProducer") << "No LHEEventProduct, so there will be no LHE Tables\n";
                 }
@@ -225,7 +264,13 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
             iEvent.put(std::move(lheRwgtTab), "LHEReweighting");
             iEvent.put(std::move(lheNamedTab), "LHENamed");
             iEvent.put(std::move(genPSTab), "PS");
-            iEvent.put(std::move(eftWeightTab), "EFTWeights");
+            iEvent.put(std::move(nnpdf31WeightTab), "NNPDF31Weights");
+            iEvent.put(std::move(nnpdf30WeightTab), "NNPDF30Weights");
+            iEvent.put(std::move(ct10nloWeightTab), "CT10nloWeights");
+            iEvent.put(std::move(ct14nloWeightTab), "CT14nloWeights");
+            iEvent.put(std::move(mstw2008WeightTab), "MSTW2008Weights");
+            iEvent.put(std::move(mmht2014WeightTab), "MMHT2014Weights");
+            iEvent.put(std::move(pdf4LHCWeightTab), "PDF4LHCWeights");
             
         }
 
@@ -240,7 +285,13 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
                 std::unique_ptr<nanoaod::FlatTable> & outRwgt,
                 std::unique_ptr<nanoaod::FlatTable> & outNamed,
                 std::unique_ptr<nanoaod::FlatTable> & outPS,
-                std::unique_ptr<nanoaod::FlatTable> & outEFT
+                std::unique_ptr<nanoaod::FlatTable> & outNNPDF31,
+                std::unique_ptr<nanoaod::FlatTable> & outNNPDF30,
+                std::unique_ptr<nanoaod::FlatTable> & outCT10nlo,
+                std::unique_ptr<nanoaod::FlatTable> & outCT14nlo,
+                std::unique_ptr<nanoaod::FlatTable> & outMSTW,
+                std::unique_ptr<nanoaod::FlatTable> & outMMHT,
+                std::unique_ptr<nanoaod::FlatTable> & outPDF4LHC
                 ) const
         {
             bool lheDebug = debug_.exchange(false); // make sure only the first thread dumps out this (even if may still be mixed up with other output, but nevermind)
@@ -308,28 +359,46 @@ class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<
             }
 
 
-            std::vector<std::string> eft_weight_names = {
-            "NNPDF31_nnlo_as_0118_nf_4", "CT10nlo_nf4", "CT14nnlo_NF4"};
+            std::vector<int> nnpdf31_ids = range(2000, 2100);
+            std::vector<int> nnpdf30_ids = range(2400, 2500);
+            std::vector<int> ct10_ids = range(3400, 3401);
+            std::vector<int> ct14_ids = range(3450, 3450);
+            std::vector<int> mstw_ids = range(3900, 3940);
+            std::vector<int> mmht_ids = range(4600, 4650);
+            std::vector<int> pdf4lhc_ids = range(5000, 5030);
 
-            std::vector<double> wEFT(eft_weight_names.size(), 1);
-            std::string description = "(";
+            auto nnpdf31_w = getPDFWeights(nnpdf31_ids, lheProd, w0);
+            auto nnpdf30_w = getPDFWeights(nnpdf30_ids, lheProd, w0);
+            auto ct10_w = getPDFWeights(ct10_ids, lheProd, w0);
+            auto ct14_w = getPDFWeights(ct14_ids, lheProd, w0);
+            auto mstw_w = getPDFWeights(mstw_ids, lheProd, w0);
+            auto mmht_w = getPDFWeights(mmht_ids, lheProd, w0);
+            auto pdf4lhc_w = getPDFWeights(pdf4lhc_ids, lheProd, w0);
 
-            auto lheweights = lheProd.weights();
-            for(unsigned int index=0; index<eft_weight_names.size(); ++index){
-                auto name = eft_weight_names[index];
-                auto pos = std::find_if(lheweights.begin(), lheweights.end(), [&name](const gen::WeightsInfo x){return x.id == name;});
-                auto weight = *pos;
-                wEFT[index] = weight.wgt / w0;
-                std::cout << name << ": " << weight.wgt / w0  << " ";
 
-                description += name + " [" + std::to_string(index) + "]; " ;
-            }
+            outNNPDF31.reset(new nanoaod::FlatTable(nnpdf31_w.size(), "NNPDF31Weights", false));
+            outNNPDF31->addColumn<float>("", nnpdf31_w, "NNPDF31", nanoaod::FlatTable::FloatColumn, lheWeightPrecision_);
 
-            description += ")";
+            outNNPDF30.reset(new nanoaod::FlatTable(nnpdf30_w.size(), "NNPDF30Weights", false));
+            outNNPDF30->addColumn<float>("", nnpdf30_w, "NNPDF30", nanoaod::FlatTable::FloatColumn, lheWeightPrecision_);
 
+            outCT10nlo.reset(new nanoaod::FlatTable(ct10_w.size(), "CT10nloWeights", false));
+            outCT10nlo->addColumn<float>("", ct10_w, "CT10", nanoaod::FlatTable::FloatColumn, lheWeightPrecision_);
+
+            outCT14nlo.reset(new nanoaod::FlatTable(ct14_w.size(), "CT14nloWeights", false));
+            outCT14nlo->addColumn<float>("", ct14_w, "CT14", nanoaod::FlatTable::FloatColumn, lheWeightPrecision_);
+
+            outMSTW.reset(new nanoaod::FlatTable(mstw_w.size(), "MSTW2008Weights", false));
+            outMSTW->addColumn<float>("", mstw_w, "MSTW", nanoaod::FlatTable::FloatColumn, lheWeightPrecision_);
+
+            outMMHT.reset(new nanoaod::FlatTable(mmht_w.size(), "MMHT2014Weights", false));
+            outMMHT->addColumn<float>("", mmht_w, "MMHT2014Weights", nanoaod::FlatTable::FloatColumn, lheWeightPrecision_);
+
+            outPDF4LHC.reset(new nanoaod::FlatTable(pdf4lhc_w.size(), "PDF4LHCWeights", false));
+            outPDF4LHC->addColumn<float>("", pdf4lhc_w, "PDF4LHCWeights", nanoaod::FlatTable::FloatColumn, lheWeightPrecision_);
             
-            outEFT.reset(new nanoaod::FlatTable(wEFT.size(), "EFTWeights", false));
-            outEFT->addColumn<float>("", wEFT, "EFT Weights " + description, nanoaod::FlatTable::FloatColumn, lheWeightPrecision_);
+            // outEFT.reset(new nanoaod::FlatTable(wEFT.size(), "EFTWeights", false));
+            // outEFT->addColumn<float>("", wEFT, "EFT Weights " + description, nanoaod::FlatTable::FloatColumn, lheWeightPrecision_);
             
             counter->incLHE(genWeight, wScale, wPDF, wRwgt, wNamed, wPS);
         }
